@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIR — Financial Freedom Is For All</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #e8e8e3;
+    font-family: 'Space Grotesk', sans-serif;
+    color: #0a0a0a;
+    overflow-x: hidden;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes ticker { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+  @keyframes float1 { 0%,100% { transform:translateY(0px); } 50% { transform:translateY(-8px); } }
+  @keyframes float2 { 0%,100% { transform:translateY(0px); } 50% { transform:translateY(6px); } }
+  .animate-fade-up { animation: fadeUp 0.7s ease both; }
+  .float1 { animation: float1 5s ease-in-out infinite; }
+  .float2 { animation: float2 6s ease-in-out infinite 1s; }
+
+  /* Mobile menu overlay backdrop */
+  .mobile-menu-open body { overflow: hidden; }
+
+  /* Fluid images */
+  img { max-width: 100%; height: auto; }
+
+  /* Tap target minimum size */
+  button, a { -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+// ── RESPONSIVE HOOK ───────────────────────────────────────────────────────────
+function useWindowWidth() {
+  const [width, setWidth] = React.useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  );
+  React.useEffect(() => {
+    const handler = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return width;
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────────────
+function Nav({ active, setActive }) {
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const items = ['Intro', 'Modules', 'Results', 'Pricing', 'Join'];
+
+  React.useEffect(() => {
+    if (!isMobile) setMenuOpen(false);
+  }, [isMobile]);
+
+  // Lock body scroll when mobile menu is open
+  React.useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  const handleNavClick = (e, item) => {
+    e.preventDefault();
+    setActive(item);
+    setMenuOpen(false);
+    document.getElementById(
+      item === 'Results' ? 'about-us' : item.toLowerCase().replace(' ', '-')
+    )?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  if (isMobile) {
+    return (
+      <>
+        <nav style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '14px 20px',
+          background: 'rgba(232,232,227,0.96)',
+          backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(0,0,0,0.07)'
+        }}>
+          <img src="assets/mir-logo-header.png" alt="MIR" style={{ height: 44, width: 'auto', display: 'block' }} />
+          <button
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{
+              background: menuOpen ? '#0a0a0a' : 'rgba(255,255,255,0.7)',
+              border: '1.5px solid rgba(0,0,0,0.15)', borderRadius: 10,
+              width: 44, height: 44, cursor: 'pointer', flexShrink: 0,
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              justifyContent: 'center', gap: 5, transition: 'background 0.2s'
+            }}>
+            <span style={{
+              display: 'block', width: 18, height: 2,
+              background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2,
+              transition: 'transform 0.25s, background 0.2s',
+              transform: menuOpen ? 'rotate(45deg) translate(0px, 7px)' : 'none'
+            }} />
+            <span style={{
+              display: 'block', width: 18, height: 2,
+              background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2,
+              transition: 'opacity 0.2s, background 0.2s',
+              opacity: menuOpen ? 0 : 1
+            }} />
+            <span style={{
+              display: 'block', width: 18, height: 2,
+              background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2,
+              transition: 'transform 0.25s, background 0.2s',
+              transform: menuOpen ? 'rotate(-45deg) translate(0px, -7px)' : 'none'
+            }} />
+          </button>
+        </nav>
+
+        {/* Dropdown menu */}
+        <div style={{
+          position: 'fixed', top: 73, left: 0, right: 0, bottom: 0, zIndex: 199,
+          background: 'rgba(232,232,227,0.98)',
+          backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+          padding: '20px 20px 40px',
+          display: 'flex', flexDirection: 'column', gap: 6,
+          pointerEvents: menuOpen ? 'all' : 'none',
+          opacity: menuOpen ? 1 : 0,
+          transform: menuOpen ? 'translateY(0)' : 'translateY(-8px)',
+          transition: 'opacity 0.25s, transform 0.25s',
+          overflowY: 'auto'
+        }}>
+          {items.map((item) => (
+            <a key={item}
+              href={`#${item.toLowerCase().replace(' ', '-')}`}
+              onClick={(e) => handleNavClick(e, item)}
+              style={{
+                padding: '16px 20px', borderRadius: 14,
+                fontSize: 17, fontWeight: 600,
+                color: active === item ? '#0a0a0a' : '#555',
+                background: active === item ? '#fff' : 'transparent',
+                boxShadow: active === item ? '0 2px 12px rgba(0,0,0,0.08)' : 'none',
+                textDecoration: 'none', transition: 'all 0.2s',
+                display: 'block', minHeight: 52
+              }}>
+              {item}
+            </a>
+          ))}
+          <button style={{
+            background: '#0a0a0a', color: '#fff', border: 'none', borderRadius: 14,
+            padding: '16px 24px', fontSize: 15, fontWeight: 700, cursor: 'pointer',
+            marginTop: 8, minHeight: 52
+          }}
+            onClick={() => { setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+            Home
+          </button>
+        </div>
+      </>
+    );
+  }
+
+  // Desktop nav (unchanged)
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '18px 48px',
+      background: 'rgba(232,232,227,0.88)',
+      backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)'
+    }}>
+      <img src="assets/mir-logo-header.png" alt="MIR" style={{ height: 80, width: 'auto', display: 'block' }} />
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 4,
+        background: 'rgba(255,255,255,0.6)',
+        border: '1px solid rgba(0,0,0,0.08)',
+        borderRadius: 100, padding: '6px 8px'
+      }}>
+        {items.map((item) =>
+          <a key={item}
+            href={`#${item.toLowerCase().replace(' ', '-')}`}
+            onClick={(e) => { e.preventDefault(); setActive(item); document.getElementById(item === 'Results' ? 'about-us' : item.toLowerCase().replace(' ', '-'))?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+            style={{
+              padding: '7px 18px', borderRadius: 100,
+              fontSize: 14, fontWeight: 500,
+              color: active === item ? '#0a0a0a' : '#666',
+              background: active === item ? '#fff' : 'transparent',
+              boxShadow: active === item ? '0 1px 6px rgba(0,0,0,0.1)' : 'none',
+              textDecoration: 'none', transition: 'all 0.2s', cursor: 'pointer'
+            }}>
+            {item}
+          </a>
+        )}
+      </div>
+      <button style={{
+        background: '#0a0a0a', color: '#fff', border: 'none', borderRadius: 100,
+        padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+        transition: 'background 0.15s'
+      }}
+        onMouseEnter={(e) => e.target.style.background = '#333'}
+        onMouseLeave={(e) => e.target.style.background = '#0a0a0a'}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home
+      </button>
+    </nav>
+  );
+}
+
+// ── PHOTO PLACEHOLDER ────────────────────────────────────────────────────────
+function PhotoBlock({ w, h, style = {} }) {
+  return (
+    <div style={{
+      width: w, height: h, borderRadius: 16,
+      background: 'linear-gradient(135deg, #c8c8c0 0%, #a8a89a 100%)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden', flexShrink: 0, ...style
+    }}>
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="18" r="8" fill="rgba(0,0,0,0.2)" />
+        <ellipse cx="24" cy="36" rx="14" ry="8" fill="rgba(0,0,0,0.15)" />
+      </svg>
+    </div>
+  );
+}
+
+// ── FLOATING CARD ─────────────────────────────────────────────────────────────
+function FloatCard({ text, style = {}, className = '' }) {
+  return (
+    <div className={className} style={{
+      background: '#fff', border: '1px solid rgba(0,0,0,0.08)',
+      borderRadius: 14, padding: '16px 18px',
+      maxWidth: 220, fontSize: 13, lineHeight: 1.55, color: '#222',
+      boxShadow: '0 4px 24px rgba(0,0,0,0.07)', ...style
+    }}>
+      {text}
+    </div>
+  );
+}
+
+// ── ACCORDION ─────────────────────────────────────────────────────────────────
+function Accordion({ items }) {
+  const [open, setOpen] = React.useState(null);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {items.map((item, i) =>
+        <div key={i}>
+          <button onClick={() => setOpen(open === i ? null : i)} style={{
+            display: 'flex', alignItems: 'center', gap: 16,
+            background: '#0a0a0a', color: '#fff',
+            border: 'none', borderRadius: 12,
+            padding: '18px 24px', width: '100%', textAlign: 'left',
+            cursor: 'pointer', fontSize: 17, fontWeight: 600, transition: 'background 0.15s',
+            minHeight: 56
+          }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#222'}
+            onMouseLeave={(e) => e.currentTarget.style.background = '#0a0a0a'}>
+            <span style={{
+              width: 32, height: 32, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 18, flexShrink: 0,
+              transform: open === i ? 'rotate(90deg)' : 'none',
+              transition: 'transform 0.2s'
+            }}>→</span>
+            {item.q}
+          </button>
+          {open === i &&
+            <div style={{
+              background: '#fff', borderRadius: '0 0 12px 12px',
+              padding: '18px 24px', fontSize: 14, lineHeight: 1.7, color: '#444',
+              marginTop: -4, border: '1px solid rgba(0,0,0,0.06)', borderTop: 'none'
+            }}>{item.a}</div>
+          }
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── PRICING TABLE ─────────────────────────────────────────────────────────────
+const PLANS = [
+  { id: 1, name: '3 Month', subtitle: 'Starter', price: 149, regular: 298, period: '3 months', perDay: (149 / 91).toFixed(2), savings: 50, cta: 'Get Started', ctaStyle: 'outline', url: 'https://buy.stripe.com/5kQ5kDfHb8C964M8dS5kk09' },
+  { id: 2, name: '6 Month', subtitle: 'Popular', price: 299, regular: 598, period: '6 months', perDay: (299 / 182).toFixed(2), savings: 50, cta: 'Get Started', ctaStyle: 'ghost', url: 'https://buy.stripe.com/3cI00jfHb6u13WEcu85kk0a' },
+  { id: 3, name: '12 Month', subtitle: 'Best Value', price: 599, regular: 1198, period: '12 months', perDay: (599 / 365).toFixed(2), savings: 50, cta: 'Get Started', ctaStyle: 'primary', highlight: true, url: 'https://buy.stripe.com/14AaEXeD75pXbp6am05kk0b' }
+];
+
+const FEATURE_GROUPS = [
+  { label: 'Course Access', features: [
+    { name: 'Full Trading Course Access', values: ['YES', 'YES', 'YES'] }]
+  },
+  { label: 'Community & Support', features: [
+    { name: 'Skool Community Group Access', values: ['YES', 'YES', 'YES'] },
+    { name: 'Access To Premium Telegram', values: ['YES', 'YES', 'YES'] },
+    { name: 'Chat Support & Guidance', values: ['YES', 'YES', 'YES'] }]
+  },
+  { label: 'MIR Indicators', features: [
+    { name: 'MIR TKC Indicator Access', values: ['YES', 'YES', 'YES'] },
+    { name: 'MIR ALL Indicator Access', values: ['NO', 'YES', 'YES'] },
+    { name: 'MIR Indicator Beta Access', values: ['NO', 'NO', 'YES'] }]
+  },
+  { label: 'Premium Perks', features: [
+    { name: '1-on-1 Onboarding Guidance', values: ['NO', 'YES', 'YES'] },
+    { name: 'Access To VIP Telegram', values: ['NO', 'NO', 'YES'] },
+    { name: 'Invitation to VIP Events', values: ['NO', 'NO', 'YES'] },
+    { name: '30min 1-on-1 Coaching (worth $200-$500)', values: ['NO', 'x2', 'x5'] }]
+  }
+];
+
+function CellVal({ val, highlight }) {
+  if (val === 'YES') return <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '50%', background: highlight ? '#fff' : '#0a0a0a', color: highlight ? '#0a0a0a' : '#fff', fontSize: 13, fontWeight: 700 }}>✓</span>;
+  if (val === 'NO') return <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.2)', fontSize: 13 }}>✕</span>;
+  return <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 36, height: 28, borderRadius: 14, padding: '0 10px', background: highlight ? '#fff' : '#0a0a0a', color: highlight ? '#0a0a0a' : '#fff', fontSize: 12, fontWeight: 700 }}>{val}</span>;
+}
+
+function PricingTable() {
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+  const COLS = PLANS.length;
+
+  const AlertBanner = () => (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '16px 20px', background: '#f5f5f0', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+      <span style={{ fontSize: 20, flexShrink: 0 }}>🚨</span>
+      <div>
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#0a0a0a' }}>Early Bird — Only 200 Slots Available. </span>
+        <span style={{ fontSize: 13, color: '#666' }}>Once slots fill, this pricing is gone. Early adopters <strong style={{ color: '#0a0a0a' }}>lock in their price for life</strong>.</span>
+      </div>
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <div>
+        {/* Alert */}
+        <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
+          <AlertBanner />
+        </div>
+        {/* Plan cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {PLANS.map((plan, pi) => (
+            <div key={plan.id} style={{
+              borderRadius: 20, overflow: 'hidden',
+              border: plan.highlight ? '2px solid #0a0a0a' : '1px solid rgba(0,0,0,0.1)',
+              background: plan.highlight ? '#0a0a0a' : '#fff',
+              boxShadow: plan.highlight ? '0 8px 40px rgba(0,0,0,0.18)' : '0 2px 16px rgba(0,0,0,0.06)'
+            }}>
+              {plan.highlight && (
+                <div style={{ background: 'rgba(255,255,255,0.12)', textAlign: 'center', padding: '8px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: '#fff', textTransform: 'uppercase' }}>★ Best Value</div>
+              )}
+              {/* Price header */}
+              <div style={{ padding: '28px 24px 24px', textAlign: 'center', borderBottom: `1px solid ${plan.highlight ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)'}` }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 4 }}>{plan.name}</div>
+                <div style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.5)' : '#999', marginBottom: 16 }}>{plan.subtitle}</div>
+                <div style={{ fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#aaa', textDecoration: 'line-through', marginBottom: 2 }}>${plan.regular.toLocaleString()}</div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 1, lineHeight: 1 }}>
+                  <span style={{ fontSize: 20, fontWeight: 700, color: plan.highlight ? 'rgba(255,255,255,0.7)' : '#666', paddingTop: 10 }}>$</span>
+                  <span style={{ fontSize: 60, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a' }}>{plan.price}</span>
+                </div>
+                <div style={{ fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.45)' : '#999', marginTop: 2, marginBottom: 12 }}>for {plan.period}</div>
+                <div style={{ display: 'inline-block', background: plan.highlight ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)', borderRadius: 20, padding: '4px 14px', fontSize: 12, fontWeight: 600, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 8 }}>Just ${plan.perDay}/day</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: plan.highlight ? '#6effa8' : '#1a9a4a', letterSpacing: '0.05em', marginBottom: 20 }}>SAVE {plan.savings}% — EARLY BIRD</div>
+                <button style={{
+                  width: '100%', padding: '15px 0', borderRadius: 12, fontSize: 15, fontWeight: 700,
+                  cursor: 'pointer', border: 'none', background: 'rgb(147, 250, 0)', color: '#0a0a0a',
+                  minHeight: 52
+                }}
+                  onClick={() => window.open(plan.url, '_blank')}>
+                  {plan.cta}
+                </button>
+              </div>
+              {/* Features */}
+              <div style={{ padding: '20px 24px 28px' }}>
+                {FEATURE_GROUPS.map((group, gi) => (
+                  <div key={gi} style={{ marginBottom: gi < FEATURE_GROUPS.length - 1 ? 20 : 0 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#888', textTransform: 'uppercase', marginBottom: 12 }}>{group.label}</div>
+                    {group.features.map((feat, fi) => (
+                      <div key={fi} style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '10px 0', minHeight: 44,
+                        borderBottom: fi < group.features.length - 1 ? `1px solid ${plan.highlight ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)'}` : 'none'
+                      }}>
+                        <span style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.75)' : '#444', paddingRight: 12, lineHeight: 1.4 }}>{feat.name}</span>
+                        <CellVal val={feat.values[pi]} highlight={plan.highlight} />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop table layout (unchanged)
+  return (
+    <div style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', background: '#fff', boxShadow: '0 4px 40px rgba(0,0,0,0.06)' }}>
+      <AlertBanner />
+      {/* Plan headers */}
+      <div style={{ display: 'grid', gridTemplateColumns: `200px repeat(${COLS},1fr)` }}>
+        <div style={{ padding: '28px 20px', borderBottom: '1px solid rgba(0,0,0,0.07)', borderRight: '1px solid rgba(0,0,0,0.07)' }}>
+          <div style={{ fontSize: 11, color: '#999', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>Features</div>
+        </div>
+        {PLANS.map((plan, pi) =>
+          <div key={plan.id} style={{
+            padding: '28px 20px', textAlign: 'center',
+            background: plan.highlight ? '#0a0a0a' : '#fff',
+            borderBottom: `1px solid ${plan.highlight ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)'}`,
+            borderRight: pi < COLS - 1 ? '1px solid rgba(0,0,0,0.07)' : 'none',
+            position: 'relative'
+          }}>
+            {plan.highlight &&
+              <div style={{ position: 'absolute', top: -1, left: '50%', transform: 'translateX(-50%)', background: '#0a0a0a', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', padding: '4px 14px', borderRadius: '0 0 10px 10px', textTransform: 'uppercase' }}>Best Value</div>
+            }
+            <div style={{ fontSize: 16, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 4 }}>{plan.name}</div>
+            <div style={{ fontSize: 11, color: plan.highlight ? 'rgba(255,255,255,0.5)' : '#999', marginBottom: 16 }}>{plan.subtitle}</div>
+            <div style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#aaa', textDecoration: 'line-through', marginBottom: 2 }}>${plan.regular.toLocaleString()}</div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 1, lineHeight: 1 }}>
+              <span style={{ fontSize: 18, fontWeight: 700, color: plan.highlight ? 'rgba(255,255,255,0.7)' : '#666', paddingTop: 8 }}>$</span>
+              <span style={{ fontSize: 48, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a' }}>{plan.price}</span>
+            </div>
+            <div style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.45)' : '#999', marginTop: 2, marginBottom: 12 }}>for {plan.period}</div>
+            <div style={{ display: 'inline-block', background: plan.highlight ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)', borderRadius: 20, padding: '4px 12px', fontSize: 11, fontWeight: 600, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 8 }}>Just ${plan.perDay}/day</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: plan.highlight ? '#6effa8' : '#1a9a4a', letterSpacing: '0.05em', marginBottom: 16 }}>SAVE {plan.savings}% — EARLY BIRD</div>
+            <button style={{
+              width: '100%', padding: '11px 0', borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: 'pointer', border: 'none', transition: 'all 0.15s',
+              ...(plan.ctaStyle === 'primary' ? { background: '#fff', color: '#0a0a0a' } :
+                plan.ctaStyle === 'ghost' ? { background: 'rgba(255,255,255,0.08)', color: '#0a0a0a', border: '1.5px solid rgba(0,0,0,0.15)' } :
+                  { background: 'transparent', color: '#666', border: '1.5px solid rgba(0,0,0,0.15)' }), transform: "none", background: "rgb(147, 250, 0)"
+            }}
+              onMouseEnter={(e) => { if (plan.ctaStyle === 'primary') e.target.style.transform = 'scale(1.02)'; }}
+              onMouseLeave={(e) => e.target.style.transform = 'none'}
+              onClick={() => window.open(plan.url, '_blank')}>
+              {plan.cta}
+            </button>
+          </div>
+        )}
+      </div>
+      {/* Feature groups */}
+      {FEATURE_GROUPS.map((group, gi) =>
+        <React.Fragment key={gi}>
+          <div style={{ display: 'grid', gridTemplateColumns: `200px repeat(${COLS},1fr)`, background: '#f5f5f0', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+            <div style={{ padding: '9px 20px', gridColumn: '1/-1', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: '#888', textTransform: 'uppercase' }}>{group.label}</div>
+          </div>
+          {group.features.map((feat, fi) =>
+            <div key={fi} style={{ display: 'grid', gridTemplateColumns: `200px repeat(${COLS},1fr)`, borderTop: '1px solid rgba(0,0,0,0.05)', transition: 'background 0.12s' }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#fafaf8'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+              <div style={{ padding: '13px 20px', borderRight: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: '#444', lineHeight: 1.4 }}>{feat.name}</span>
+              </div>
+              {PLANS.map((plan, pi) =>
+                <div key={pi} style={{ padding: '13px 20px', borderRight: pi < COLS - 1 ? '1px solid rgba(0,0,0,0.07)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', background: plan.highlight ? '#0a0a0a' : 'transparent' }}>
+                  <CellVal val={feat.values[pi]} highlight={plan.highlight} />
+                </div>
+              )}
+            </div>
+          )}
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
+// ── TRADING CALENDAR ─────────────────────────────────────────────────────────
+function TradingCalendar() {
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+  const isSmallMobile = width < 420;
+
+  const days = isMobile
+    ? ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+    : ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  const startOffset = 3;
+  const totalDays = 30;
+
+  const trades = {
+    1: { amount: -104.50, pct: 57, positive: false },
+    6: { amount: 511.50, pct: 50, positive: true },
+    13: { amount: -68.00, pct: 27, positive: false },
+    14: { amount: 1705.50, pct: 40, positive: true },
+    15: { amount: 315.00, pct: 67, positive: true },
+    16: { amount: -290.00, pct: 50, positive: false },
+    17: { amount: 158.50, pct: 50, positive: true },
+    20: { amount: 480.00, pct: 67, positive: true },
+    21: { amount: -785.00, pct: 38, positive: false },
+    23: { amount: 597.50, pct: 50, positive: true },
+    24: { amount: 379.50, pct: 0, positive: true }
+  };
+
+  const cells = [];
+  for (let i = 0; i < 6 * 7; i++) {
+    const dayNum = i - startOffset + 1;
+    cells.push(dayNum >= 1 && dayNum <= totalDays ? dayNum : null);
+  }
+
+  const cellH = isSmallMobile ? 58 : isMobile ? 68 : 88;
+  const cellPad = isMobile ? '6px 3px' : '10px 12px';
+  const amtSize = isSmallMobile ? 10 : isMobile ? 12 : 15;
+  const daySize = isMobile ? 9 : 12;
+  const pctSize = isMobile ? 9 : 11;
+
+  return (
+    <div style={{ background: '#111', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '12px 14px' : '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#e8e8e3' }}>Trading Calendar</span>
+          <div style={{ display: 'flex', gap: 4 }}>
+            <span style={{ background: '#22c55e', color: '#fff', fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 6 }}>PNL</span>
+            <span style={{ background: 'rgba(255,255,255,0.08)', color: '#888', fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 6 }}>Events</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#888', width: 32, height: 32, borderRadius: 6, cursor: 'pointer', fontSize: 14, minWidth: 32 }}>←</button>
+          <span style={{ fontSize: isMobile ? 12 : 14, fontWeight: 600, color: '#e8e8e3' }}>April 2026</span>
+          <button style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#888', width: 32, height: 32, borderRadius: 6, cursor: 'pointer', fontSize: 14, minWidth: 32 }}>→</button>
+        </div>
+      </div>
+      {/* Day headers */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        {days.map((d) =>
+          <div key={d} style={{ padding: isMobile ? '8px 0' : '12px 0', textAlign: 'center', fontSize: isMobile ? 10 : 11, fontWeight: 700, letterSpacing: isMobile ? '0' : '0.1em', color: '#555' }}>{d}</div>
+        )}
+      </div>
+      {/* Calendar rows */}
+      {[0, 1, 2, 3, 4, 5].map((row) =>
+        <div key={row} style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', borderBottom: row < 5 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+          {cells.slice(row * 7, row * 7 + 7).map((dayNum, ci) => {
+            const trade = dayNum ? trades[dayNum] : null;
+            return (
+              <div key={ci} style={{
+                minHeight: cellH,
+                borderRight: ci < 6 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                padding: cellPad,
+                background: trade ? trade.positive ? 'rgba(22,101,52,0.4)' : 'rgba(127,29,29,0.4)' : 'transparent',
+                outline: trade ? `1px solid ${trade.positive ? 'rgba(34,197,94,0.35)' : 'rgba(239,68,68,0.35)'}` : 'none',
+                outlineOffset: '-2px',
+                display: 'flex', flexDirection: 'column'
+              }}>
+                {dayNum &&
+                  <>
+                    <span style={{ fontSize: daySize, fontWeight: 500, color: trade ? '#e8e8e3' : '#555', marginBottom: trade ? 3 : 0 }}>{dayNum}</span>
+                    {trade &&
+                      <>
+                        <span style={{ fontSize: amtSize, fontWeight: 700, color: trade.positive ? '#4ade80' : '#f87171', lineHeight: 1.2 }}>
+                          {trade.amount < 0 ? `-$${Math.abs(trade.amount).toFixed(2)}` : `$${trade.amount.toFixed(2)}`}
+                        </span>
+                        {!isSmallMobile && (
+                          <span style={{ fontSize: pctSize, color: trade.positive ? '#4ade80' : '#f87171', marginTop: 2, opacity: 0.8 }}>{trade.pct}%</span>
+                        )}
+                      </>
+                    }
+                  </>
+                }
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── IMAGE SLIDESHOW ───────────────────────────────────────────────────────────
+function Slideshow() {
+  const images = ['assets/Q4.png', 'assets/Q1.png', 'assets/Q2.jpg', 'assets/Q3.png'];
+  const [current, setCurrent] = React.useState(0);
+  const [fading, setFading] = React.useState(false);
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+
+  React.useEffect(() => {
+    const t = setInterval(() => {
+      setFading(true);
+      setTimeout(() => {
+        setCurrent((c) => (c + 1) % images.length);
+        setFading(false);
+      }, 400);
+    }, 3500);
+    return () => clearInterval(t);
+  }, []);
+
+  const go = (dir) => {
+    setFading(true);
+    setTimeout(() => {
+      setCurrent((c) => (c + dir + images.length) % images.length);
+      setFading(false);
+    }, 300);
+  };
+
+  return (
+    <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', background: '#111' }}>
+      <img
+        src={images[current]}
+        style={{
+          width: '100%', height: isMobile ? 260 : 480, objectFit: 'contain',
+          background: '#111',
+          opacity: fading ? 0 : 1,
+          transition: 'opacity 0.4s ease',
+          display: 'block'
+        }} />
+      <button onClick={() => go(-1)} style={{
+        position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+        background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)',
+        color: '#fff', width: 40, height: 40, borderRadius: '50%',
+        fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'background 0.15s', minWidth: 40
+      }}
+        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
+        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>
+        ←
+      </button>
+      <button onClick={() => go(1)} style={{
+        position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+        background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)',
+        color: '#fff', width: 40, height: 40, borderRadius: '50%',
+        fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'background 0.15s', minWidth: 40
+      }}
+        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
+        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>
+        →
+      </button>
+      <div style={{ position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8 }}>
+        {images.map((_, i) =>
+          <button key={i} onClick={() => { setFading(true); setTimeout(() => { setCurrent(i); setFading(false); }, 300); }} style={{
+            width: i === current ? 20 : 8, height: 8,
+            borderRadius: 4, border: 'none', cursor: 'pointer',
+            background: i === current ? '#fff' : 'rgba(255,255,255,0.3)',
+            transition: 'all 0.3s', padding: 0, minWidth: 8
+          }} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── INTRO RIGHT PANEL (responsive) ───────────────────────────────────────────
+function IntroVisual() {
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+
+  if (isMobile) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <FloatCard
+          text="Imagine making an extra $50-$100 a day consistently — That could eventually scale to outgrow your job's income"
+          style={{ maxWidth: '100%', width: '100%' }}
+        />
+        <div style={{ display: 'flex', gap: 12 }}>
+          <img src="assets/img1.png" style={{ flex: 1, height: 140, objectFit: 'cover', borderRadius: 14, minWidth: 0 }} />
+          <img src="assets/img2.png" style={{ flex: 1, height: 140, objectFit: 'cover', borderRadius: 14, minWidth: 0 }} />
+        </div>
+        <FloatCard
+          text="Imagine working only 1-3 hours a day, and having extra time and freedom to do what you want to do, while earning more."
+          style={{ maxWidth: '100%', width: '100%' }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ position: 'relative', height: 360 }}>
+      <FloatCard text="Imagine making an extra $50-$100 a day consistently — That could eventually scale to outgrow your job's income" className="float1" style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }} />
+      <img src="assets/img1.png" style={{ position: 'absolute', top: 0, right: 0, width: 240, height: 160, objectFit: 'cover', borderRadius: 16 }} />
+      <img src="assets/img2.png" style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 200, height: 200, objectFit: 'cover', borderRadius: 16 }} />
+      <FloatCard text={"Imagine working only 1-3 hours a day, and having extra time and freedom to do what you want to do, while earning more."} className="float2" style={{ position: 'absolute', bottom: 20, right: 0, zIndex: 2 }} />
+    </div>
+  );
+}
+
+// ── APP ───────────────────────────────────────────────────────────────────────
+function App() {
+  const [activeNav, setActiveNav] = React.useState('Intro');
+  const [showTweaks, setShowTweaks] = React.useState(false);
+  const width = useWindowWidth();
+  const isMobile = width < 768;
+  const isTablet = width < 1024;
+
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode') setShowTweaks(true);
+      if (e.data?.type === '__deactivate_edit_mode') setShowTweaks(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  React.useEffect(() => {
+    const sections = ['intro', 'modules', 'about-us', 'pricing', 'join'];
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          const label = id === 'about-us' ? 'Results' : id.charAt(0).toUpperCase() + id.slice(1);
+          setActiveNav(label);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '-80px 0px -50% 0px' });
+    sections.forEach((id) => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    return () => observer.disconnect();
+  }, []);
+
+  const faqItems = [
+    { q: 'I have no experience in trading.', a: "No problem at all. We have an introduction course that will teach you the basics from scratch. Our step-by-step system is designed for complete beginners — you don't need any prior knowledge." },
+    { q: 'What if I need help?', a: "We provide 1-on-1 support so you can overcome any obstacle. With access to Premium Telegram, chat support, and dedicated onboarding guidance, you're never alone on this journey." },
+    { q: 'Will I be learning alone?', a: "There will be a big community of like-minded individuals learning together and supporting each other to success. Join the Skool community and connect with traders at every level." }
+  ];
+
+  const hPad = isMobile ? '20px' : isTablet ? '40px' : '80px';
+  const vPad = isMobile ? '40px' : '60px';
+  const SS = { padding: `${vPad} ${hPad}`, maxWidth: 1200, margin: '0 auto' };
+
+  const moduleColumns = [
+    { label: 'MODULE 1', topics: [
+      { title: 'Futures Intro', tags: ['Candlesticks', 'Buying & Selling', 'Prop Firms', 'Tradingview', 'Fundamentals', 'Technicals'] },
+      { title: 'Basics', tags: ['Market Structure', 'An Edge', 'Sessions', 'Wyckoff', 'Manipulation', 'Volume Profile'] },
+      { title: 'Psychology', tags: ['Reality of Trading', 'Ego', 'Secret of Great Achievements', 'Detachment', 'Red Flags & How to fix them', 'Getting Rid of Fear', 'Common Thread', 'In The Zone'] }]
+    },
+    { label: 'MODULE 2', topics: [
+      { title: 'Key Indicators', tags: ['EMAs', 'Parabolic SAR', 'RedK Everex', 'ATR'] },
+      { title: 'TKC Concepts', tags: ['True Key Candles', 'TKC as an Edge', 'The Idea', 'True Continuation Candles', 'High Value Nodes'] },
+      { title: 'MIR Indicators', tags: ['MIR Trend Zones', 'MIR TKC', 'MIR EMA Expansion'] }]
+    },
+    { label: 'MODULE 3', topics: [
+      { title: 'Entering a Trade', tags: ['Pullback Entry Model', 'Position Sizing', 'SL Placement', 'Live Trade Examples', 'Checklist', 'TP Placement'] },
+      { title: 'After a Trade', tags: ['What a Day Looks like for a Trader', 'Maintaining a Playbook', 'Passing Prop Accounts', 'Technicals'] },
+      { title: 'Mir Community', tags: ['Support Channels', 'Points System', 'Features', 'Effort & Result'] }]
+    }
+  ];
+
+  const navTopPad = isMobile ? 88 : 140;
+
+  return (
+    <div style={{ background: '#e8e8e3', minHeight: '100vh' }}>
+      <Nav active={activeNav} setActive={setActiveNav} />
+
+      {/* INTRO */}
+      <section id="intro" style={{
+        ...SS,
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? 32 : 60,
+        alignItems: 'center',
+        paddingTop: navTopPad,
+        paddingBottom: 48
+      }}>
+        <div>
+          <h1 style={{ fontSize: 'clamp(36px,5.5vw,72px)', fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em', color: '#0a0a0a', marginBottom: 20 }} className="animate-fade-up">
+            Financial Freedom<br />Is For All.
+          </h1>
+          <p style={{ fontSize: isMobile ? 15 : 17, color: '#555', lineHeight: 1.65, maxWidth: 460, marginBottom: 32 }}>
+            Make an amazing living with futures trading using a simple strategy that makes you profitable in 14 days.
+          </p>
+          <Accordion items={faqItems} />
+        </div>
+        <IntroVisual />
+      </section>
+
+      {/* MODULES */}
+      <section id="modules" style={{ ...SS }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#999', marginBottom: 14, textAlign: 'center' }}>Modules</div>
+        <h2 style={{ fontSize: 'clamp(28px,5.5vw,76px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.0, color: '#0a0a0a', marginBottom: isMobile ? 32 : 52, textAlign: 'center' }}>
+          Over 6 hours of video training
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(3,1fr)', gap: isMobile ? 40 : 32 }}>
+          {moduleColumns.map((col, ci) =>
+            <div key={ci}>
+              <div style={{ textAlign: 'center', marginBottom: 28 }}>
+                <span style={{ display: 'inline-block', border: '2px solid #0a0a0a', borderRadius: 100, padding: '8px 24px', fontSize: 15, fontWeight: 700, letterSpacing: '0.08em', color: '#0a0a0a' }}>{col.label}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                {col.topics.map((topic, ti) =>
+                  <div key={ti} style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', maxWidth: 280 }}>
+                      {topic.tags.slice(0, Math.ceil(topic.tags.length / 2)).map((tag, i) =>
+                        <span key={i} style={{ fontSize: 11, color: '#555', fontWeight: 500, background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 8px' }}>{tag}</span>
+                      )}
+                    </div>
+                    <div style={{ background: '#0a0a0a', color: '#fff', borderRadius: 12, padding: '14px 28px', fontSize: isMobile ? 17 : 20, fontWeight: 700, textAlign: 'center', width: '100%', letterSpacing: '-0.01em' }}>{topic.title}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center', maxWidth: 280 }}>
+                      {topic.tags.slice(Math.ceil(topic.tags.length / 2)).map((tag, i) =>
+                        <span key={i} style={{ fontSize: 11, color: '#555', fontWeight: 500, background: 'rgba(0,0,0,0.05)', borderRadius: 4, padding: '2px 8px' }}>{tag}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* RESULTS / ABOUT */}
+      <section id="about-us" style={{ ...SS, display: 'flex', flexDirection: 'column', gap: isMobile ? 48 : 80 }}>
+
+        {/* Trading calendar */}
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#999', marginBottom: 14, textAlign: 'center' }}>Results</div>
+          <h2 style={{ fontSize: 'clamp(22px,3.5vw,44px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#0a0a0a', marginBottom: 28, textAlign: 'center' }}>
+            Imagine daily earnings like these
+          </h2>
+          <TradingCalendar />
+        </div>
+
+        {/* About grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 80, alignItems: 'center' }}>
+          <div>
+            <h2 style={{ fontSize: 'clamp(26px,3.5vw,48px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 20, color: '#0a0a0a' }}>
+              Built by traders,<br />for traders.
+            </h2>
+            <p style={{ fontSize: isMobile ? 14 : 15, color: '#555', lineHeight: 1.75, marginBottom: 20 }}>
+              MIR was founded with one belief: financial freedom shouldn't be reserved for the few. We've spent years developing a strategy that's simple, repeatable, and effective — and now we're sharing it with the world.
+            </p>
+            <p style={{ fontSize: isMobile ? 14 : 15, color: '#555', lineHeight: 1.75, marginBottom: 28 }}>
+              Our indicators, community, and coaching are all designed to cut through the noise and give you exactly what you need to become consistently profitable.
+            </p>
+            <div style={{ display: 'flex', gap: isMobile ? 28 : 40, flexWrap: 'wrap' }}>
+              {[['$10,000+', 'Payouts'], ['14 Days', 'To First Profit'], ['50%', 'Payouts']].map(([num, label], i) =>
+                <div key={i}>
+                  <div style={{ fontSize: isMobile ? 22 : 28, fontWeight: 700, color: '#0a0a0a', letterSpacing: '-0.02em' }}>{num}</div>
+                  <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{label}</div>
+                </div>
+              )}
+            </div>
+          </div>
+          <Slideshow />
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section id="pricing" style={{ ...SS }}>
+        <div style={{ marginBottom: isMobile ? 32 : 48 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#999', marginBottom: 14 }}>Pricing</div>
+          <h2 style={{ fontSize: 'clamp(26px,4vw,52px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 12, color: '#0a0a0a' }}>
+            Choose your path to<br />consistent income.
+          </h2>
+          <p style={{ fontSize: isMobile ? 14 : 15, color: '#666', maxWidth: 460, lineHeight: 1.6 }}>
+            All plans are 50% off regular price. Early adopters lock in their rate for life — prices increase as slots fill.
+          </p>
+        </div>
+        <PricingTable />
+      </section>
+
+      {/* JOIN */}
+      <section id="join" style={{ ...SS, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+        <h2 style={{ fontSize: 'clamp(28px,5vw,68px)', fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.05, color: '#0a0a0a', maxWidth: 720, marginBottom: 20 }}>
+          Your financial freedom starts today.
+        </h2>
+        <p style={{ fontSize: isMobile ? 14 : 16, color: '#666', maxWidth: 460, lineHeight: 1.65, marginBottom: 14, padding: '0 4px' }}>
+          Join traders who are building wealth and security for the future. Limited early bird slots remaining.
+        </p>
+        <p style={{ fontSize: isMobile ? 17 : 20, fontWeight: 700, color: '#0a0a0a', marginBottom: 28, letterSpacing: '-0.01em' }}>NOT SURE YET?</p>
+        <button style={{
+          background: '#0a0a0a', color: '#fff', border: 'none', borderRadius: 100,
+          padding: isMobile ? '16px 36px' : '16px 40px', fontSize: isMobile ? 15 : 16, fontWeight: 700,
+          cursor: 'pointer', transition: 'all 0.2s', minHeight: 52
+        }}
+          onMouseEnter={(e) => { e.target.style.background = '#333'; e.target.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={(e) => { e.target.style.background = '#0a0a0a'; e.target.style.transform = 'none'; }}
+          onClick={() => window.open('https://wa.me/message/UF6ZSWQHWSXCF1', '_blank')}>WhatsApp Us
+        </button>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginTop: 48 }}>
+          {[['🔒', 'Secure Checkout'], ['✅', 'Instant Access'], ['💬', 'Community Support'], ['📈', 'Proven Strategy'], ['🏆', '$10,000+ Payouts']].map(([icon, text], i) =>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 100, padding: '10px 16px', fontSize: isMobile ? 12 : 13, fontWeight: 500, color: '#444' }}>
+              <span>{icon}</span>{text}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{
+        borderTop: '1px solid rgba(0,0,0,0.08)',
+        padding: isMobile ? '28px 20px' : '32px 80px',
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: isMobile ? 16 : 0,
+        maxWidth: 1200, margin: '0 auto'
+      }}>
+        <span style={{ fontSize: 12, color: '#aaa' }}>© 2026 MIR Trading. All rights reserved.</span>
+        <div style={{ display: 'flex', gap: 24 }}>
+          {['Privacy', 'Terms', 'Contact'].map((l) =>
+            <a key={l} href={l === 'Privacy' ? 'privacy.html' : l === 'Terms' ? 'terms.html' : 'https://wa.me/message/UF6ZSWQHWSXCF1'}
+              target={l === 'Contact' ? '_blank' : '_self'} rel={l === 'Contact' ? 'noopener noreferrer' : undefined} style={{ fontSize: 12, color: '#999', textDecoration: 'none', padding: '4px 0', minHeight: 32, display: 'flex', alignItems: 'center' }}>{l}</a>
+          )}
+        </div>
+      </footer>
+
+      {/* TWEAKS */}
+      {showTweaks &&
+        <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, background: '#fff', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 14, padding: 20, width: 220, boxShadow: '0 12px 48px rgba(0,0,0,0.15)' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: '#0a0a0a', marginBottom: 14 }}>Tweaks</div>
+          <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>Background</label>
+          <input type="color" defaultValue="#e8e8e3" onChange={(e) => document.querySelector('#root > div').style.background = e.target.value} style={{ width: '100%', height: 32, borderRadius: 6, border: '1px solid #eee', cursor: 'pointer' }} />
+        </div>
+      }
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

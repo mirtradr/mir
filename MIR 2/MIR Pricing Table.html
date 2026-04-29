@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIR — Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #080810;
+    font-family: 'Outfit', sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a14; }
+  ::-webkit-scrollbar-thumb { background: #0057FF44; border-radius: 3px; }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px #0057FF44, 0 0 40px #0057FF22; }
+    50% { box-shadow: 0 0 30px #0057FF88, 0 0 60px #0057FF44; }
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes countPulse {
+    0%, 100% { color: #fff; }
+    50% { color: #ff6b35; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "#0e46b9",
+  "darkBg": true,
+  "showCountdown": true,
+  "highlightCol": 2
+}/*EDITMODE-END*/;
+
+const tweaks = {...TWEAK_DEFAULTS};
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const PLANS = [
+  {
+    id: 1,
+    name: '3 Month',
+    subtitle: 'Starter',
+    price: 149,
+    regular: 298,
+    period: '3 months',
+    perDay: (149 / 91).toFixed(2),
+    savings: 50,
+    cta: 'Get Started',
+    ctaStyle: 'ghost',
+    badge: null,
+  },
+  {
+    id: 2,
+    name: '6 Month',
+    subtitle: 'Most Popular',
+    price: 299,
+    regular: 598,
+    period: '6 months',
+    perDay: (299 / 182).toFixed(2),
+    savings: 50,
+    cta: 'Choose Plan',
+    ctaStyle: 'primary',
+    badge: null,
+  },
+  {
+    id: 3,
+    name: '12 Month',
+    subtitle: 'Best Value',
+    price: 599,
+    regular: 1198,
+    period: '12 months',
+    perDay: (599 / 365).toFixed(2),
+    savings: 50,
+    cta: 'Get Best Value',
+    ctaStyle: 'gold',
+    badge: null,
+    highlight: true,
+  },
+];
+
+const FEATURE_GROUPS = [
+  {
+    label: 'Course Access',
+    features: [
+      { name: 'Full Trading Course Access', values: ['YES','YES','YES'] },
+    ]
+  },
+  {
+    label: 'Community & Support',
+    features: [
+      { name: 'Skool Community Group Access', values: ['YES','YES','YES'] },
+      { name: 'Access To Premium Telegram', values: ['YES','YES','YES'] },
+      { name: 'Chat Support & Guidance', values: ['YES','YES','YES'] },
+    ]
+  },
+  {
+    label: 'MIR Indicators',
+    features: [
+      { name: 'MIR TKC Indicator Access', values: ['YES','YES','YES'] },
+      { name: 'MIR ALL Indicator Access', values: ['NO','YES','YES'] },
+      { name: 'Mir Indicator Beta Access', values: ['NO','NO','YES'] },
+    ]
+  },
+  {
+    label: 'Premium Perks',
+    features: [
+      { name: '1-on-1 Onboarding Guidance', values: ['NO','YES','YES'] },
+      { name: 'Access To VIP Telegram', values: ['NO','NO','YES'] },
+      { name: 'Invitation to VIP Events', values: ['NO','NO','YES'] },
+      { name: '30min 1-on-1 Coaching (worth $100)', values: ['NO','x2','x5'] },
+    ]
+  },
+];
+
+// ─── COUNTDOWN ───────────────────────────────────────────────────────────────
+function useCountdown() {
+  const [time, setTime] = React.useState(() => {
+    const stored = localStorage.getItem('mir_countdown_end');
+    if (stored) return Math.max(0, parseInt(stored) - Date.now());
+    const end = Date.now() + 23 * 3600000 + 47 * 60000 + 33000;
+    localStorage.setItem('mir_countdown_end', end);
+    return end - Date.now();
+  });
+  React.useEffect(() => {
+    const t = setInterval(() => setTime(prev => Math.max(0, prev - 1000)), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const h = Math.floor(time / 3600000).toString().padStart(2,'0');
+  const m = Math.floor((time % 3600000) / 60000).toString().padStart(2,'0');
+  const s = Math.floor((time % 60000) / 1000).toString().padStart(2,'0');
+  return { h, m, s };
+}
+
+// ─── CELL VALUE ──────────────────────────────────────────────────────────────
+function CellValue({ val, highlight }) {
+  const accent = tweaks.accentColor;
+  if (val === 'YES') return (
+    <span style={{
+      display:'inline-flex', alignItems:'center', justifyContent:'center',
+      width:28, height:28, borderRadius:'50%',
+      background: highlight ? accent : `${accent}22`,
+      color: highlight ? '#fff' : accent,
+      fontSize:14, fontWeight:700,
+    }}>✓</span>
+  );
+  if (val === 'NO') return (
+    <span style={{
+      display:'inline-flex', alignItems:'center', justifyContent:'center',
+      width:28, height:28, borderRadius:'50%',
+      background:'rgba(255,255,255,0.04)',
+      color:'rgba(255,255,255,0.2)',
+      fontSize:13,
+    }}>✕</span>
+  );
+  // e.g. x2, x5
+  return (
+    <span style={{
+      display:'inline-flex', alignItems:'center', justifyContent:'center',
+      minWidth:36, height:28, borderRadius:14, padding:'0 10px',
+      background: highlight ? accent : `${accent}22`,
+      color: highlight ? '#fff' : accent,
+      fontSize:13, fontWeight:700, letterSpacing:'0.02em',
+    }}>{val}</span>
+  );
+}
+
+// ─── PLAN CARD ────────────────────────────────────────────────────────────────
+function PlanHeader({ plan, isHighlight }) {
+  const accent = tweaks.accentColor;
+  return (
+    <div style={{
+      padding: isHighlight ? '28px 20px 24px' : '28px 20px 24px',
+      textAlign: 'center',
+      position: 'relative',
+      borderBottom: `1px solid ${isHighlight ? `${accent}44` : 'rgba(255,255,255,0.06)'}`,
+    }}>
+      {plan.badge && (
+        <div style={{
+          position:'absolute', top:-16, left:'50%', transform:'translateX(-50%)',
+          background: isHighlight ? accent : 'linear-gradient(135deg, #FFD700, #FF8C00)',
+          color: '#fff',
+          fontSize: 11, fontWeight: 700, letterSpacing: '0.05em',
+          padding: '5px 14px', borderRadius: 20,
+          whiteSpace: 'nowrap',
+          boxShadow: isHighlight ? `0 4px 16px ${accent}66` : '0 4px 16px rgba(255,165,0,0.4)',
+        }}>{plan.badge}</div>
+      )}
+
+      {plan.slots && (
+        <div style={{
+          fontSize:11, fontWeight:600, letterSpacing:'0.1em', color: accent,
+          textTransform:'uppercase', marginBottom:8,
+        }}>
+          {plan.slots} FREE SLOTS
+        </div>
+      )}
+
+      <div style={{ fontSize:18, fontWeight:700, color:'#fff', marginBottom:4 }}>{plan.name}</div>
+      <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginBottom:16, fontWeight:400 }}>{plan.subtitle}</div>
+
+      {plan.price === 0 ? (
+        <div style={{ fontSize:42, fontWeight:800, color:'#fff', lineHeight:1 }}>
+          FREE
+        </div>
+      ) : (
+        <>
+          {plan.regular && (
+            <div style={{ fontSize:13, color:'rgba(255,255,255,0.35)', textDecoration:'line-through', marginBottom:2 }}>
+              ${plan.regular.toLocaleString()}
+            </div>
+          )}
+          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'center', gap:2, lineHeight:1 }}>
+            <span style={{ fontSize:20, fontWeight:700, color:'rgba(255,255,255,0.7)', paddingTop:8 }}>$</span>
+            <span style={{ fontSize:52, fontWeight:800, color:'#fff' }}>{plan.price}</span>
+          </div>
+          <div style={{ fontSize:12, color:'rgba(255,255,255,0.4)', marginTop:2 }}>
+            for {plan.period}
+          </div>
+          {plan.perDay && (
+            <div style={{
+              marginTop:10, display:'inline-block',
+              background: `${accent}18`, border:`1px solid ${accent}33`,
+              borderRadius:20, padding:'4px 12px',
+              fontSize:11, fontWeight:600, color: accent,
+            }}>
+              Just ${plan.perDay}/day
+            </div>
+          )}
+          {plan.savings && (
+            <div style={{
+              marginTop:8, fontSize:11, fontWeight:700,
+              color: isHighlight ? '#4eff91' : '#4eff91',
+              letterSpacing:'0.05em',
+            }}>
+              SAVE {plan.savings}% — EARLY BIRD
+            </div>
+          )}
+        </>
+      )}
+
+      <button style={{
+        marginTop:20, width:'100%', padding:'12px 0',
+        borderRadius:10, border:'none', cursor:'pointer',
+        fontSize:14, fontWeight:700, letterSpacing:'0.03em',
+        transition:'all 0.2s',
+        ...(plan.ctaStyle === 'primary' ? {
+          background: accent,
+          color:'#fff',
+          boxShadow: `0 4px 20px ${accent}55`,
+        } : plan.ctaStyle === 'gold' ? {
+          background: 'linear-gradient(135deg, #FFD700, #FF8C00)',
+          color:'#fff',
+          boxShadow: '0 4px 20px rgba(255,180,0,0.4)',
+        } : plan.ctaStyle === 'outline' ? {
+          background:'transparent',
+          color:'rgba(255,255,255,0.6)',
+          border:'1px solid rgba(255,255,255,0.2)',
+        } : {
+          background:'rgba(255,255,255,0.08)',
+          color:'#fff',
+          border:`1px solid rgba(255,255,255,0.12)`,
+        }),
+      }}
+      onMouseEnter={e => {
+        if(plan.ctaStyle==='primary'||plan.ctaStyle==='gold') e.target.style.transform='translateY(-2px)';
+      }}
+      onMouseLeave={e => e.target.style.transform='translateY(0)'}
+      >{plan.cta}</button>
+    </div>
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+function App() {
+  const [showTweaks, setShowTweaks] = React.useState(false);
+  const accent = tweaks.accentColor;
+
+  // Listen for tweaks toggle
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode') setShowTweaks(true);
+      if (e.data?.type === '__deactivate_edit_mode') setShowTweaks(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const COLS = PLANS.length;
+
+  return (
+    <div style={{ minHeight:'100vh', background: tweaks.darkBg ? '#080810' : '#f4f6fb' }}>
+
+      {/* ── Urgency Ticker ── */}
+      <div style={{
+        background: `linear-gradient(90deg, ${accent}, #003bb5)`,
+        overflow:'hidden', height:36, display:'flex', alignItems:'center',
+      }}>
+        <div style={{
+          display:'flex', gap:60, whiteSpace:'nowrap',
+          animation:'ticker 28s linear infinite',
+          fontSize:12, fontWeight:600, letterSpacing:'0.08em', color:'#fff',
+        }}>
+          {[...Array(6)].map((_,i) => (
+            <span key={i}>
+              ⚡ LIMITED TIME — EARLY BIRD PRICING &nbsp;&nbsp;•&nbsp;&nbsp;
+              🔒 SLOTS FILLING FAST &nbsp;&nbsp;•&nbsp;&nbsp;
+              📈 JOIN 1000+ MIR TRADERS &nbsp;&nbsp;•&nbsp;&nbsp;
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ maxWidth:1140, margin:'0 auto', padding:'0 24px 80px' }}>
+
+        {/* ── Header ── */}
+        <div style={{ textAlign:'center', padding:'60px 0 20px', animation:'fadeUp 0.6s ease both' }}>
+          <div style={{
+            display:'inline-block', fontSize:11, fontWeight:700, letterSpacing:'0.15em',
+            color: accent, textTransform:'uppercase', marginBottom:16,
+            background:`${accent}18`, border:`1px solid ${accent}33`,
+            borderRadius:20, padding:'6px 16px',
+          }}>
+            MIR Trading — Membership Plans
+          </div>
+          <h1 style={{
+            fontSize:'clamp(32px, 5vw, 56px)', fontWeight:800, lineHeight:1.1,
+            color:'#fff', marginBottom:16,
+          }}>
+            Choose Your Path to<br />
+            <span style={{
+              background:`linear-gradient(135deg, ${accent}, #00c3ff)`,
+              WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent',
+            }}>Consistent Trading Income</span>
+          </h1>
+          <p style={{ fontSize:17, color:'rgba(255,255,255,0.5)', maxWidth:540, margin:'0 auto 32px', lineHeight:1.6 }}>
+            All plans are 50% off regular price. Early adopters lock in their rate — prices increase as slots fill.
+          </p>
+
+          {/* Slots urgency + price lock */}
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:12 }}>
+            <div style={{
+              display:'inline-flex', alignItems:'center', gap:12,
+              background:`linear-gradient(135deg, ${accent}22, ${accent}0a)`,
+              border:`1.5px solid ${accent}66`,
+              borderRadius:14, padding:'14px 28px',
+              boxShadow:`0 0 32px ${accent}22`,
+            }}>
+              <span style={{ fontSize:22 }}>🚨</span>
+              <div style={{ textAlign:'left' }}>
+                <div style={{ fontSize:16, fontWeight:800, color:'#fff', letterSpacing:'0.01em' }}>
+                  Early Bird — Only <span style={{ color: accent }}>200 Slots</span> Available
+                </div>
+                <div style={{ fontSize:12, color:'rgba(255,255,255,0.5)', marginTop:2 }}>
+                  Once slots fill, this pricing will not be offered again.
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display:'inline-flex', alignItems:'center', gap:8,
+              background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)',
+              borderRadius:10, padding:'10px 20px',
+              fontSize:13, color:'rgba(255,255,255,0.55)',
+            }}>
+              <span style={{ fontSize:15 }}>🔒</span>
+              Early adopters <strong style={{ color:'#fff' }}>lock in their price for life</strong> — your rate never increases.
+            </div>
+          </div>
+        </div>
+
+        {/* ── Table ── */}
+        <div style={{
+          animation:'fadeUp 0.7s ease 0.1s both',
+          marginTop:40, borderRadius:20, overflow:'hidden',
+          border:'1px solid rgba(255,255,255,0.08)',
+          background:'rgba(255,255,255,0.02)',
+        }}>
+
+          {/* Plan Headers Row */}
+          <div style={{
+            display:'grid',
+            gridTemplateColumns:`220px repeat(${COLS}, 1fr)`,
+          }}>
+            {/* Empty corner */}
+            <div style={{
+              padding:'28px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)',
+              borderRight:'1px solid rgba(255,255,255,0.06)',
+            }}>
+              <div style={{ fontSize:11, color:'rgba(255,255,255,0.25)', letterSpacing:'0.1em', textTransform:'uppercase', fontWeight:600 }}>
+                Features
+              </div>
+            </div>
+
+            {/* Plan headers */}
+            {PLANS.map((plan, pi) => (
+              <div key={plan.id} style={{
+                position:'relative',
+                borderBottom:`1px solid ${plan.highlight ? `${accent}44` : 'rgba(255,255,255,0.06)'}`,
+                borderRight: pi < COLS-1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                background: plan.highlight
+                  ? `linear-gradient(180deg, ${accent}18 0%, transparent 100%)`
+                  : 'transparent',
+                animation: plan.highlight ? 'pulse-glow 3s ease infinite' : 'none',
+              }}>
+                <PlanHeader plan={plan} isHighlight={plan.highlight} />
+              </div>
+            ))}
+          </div>
+
+          {/* Feature Groups */}
+          {FEATURE_GROUPS.map((group, gi) => (
+            <React.Fragment key={gi}>
+              {/* Group label */}
+              <div style={{
+                display:'grid',
+                gridTemplateColumns:`220px repeat(${COLS}, 1fr)`,
+                background:'rgba(255,255,255,0.025)',
+                borderTop:'1px solid rgba(255,255,255,0.04)',
+              }}>
+                <div style={{
+                  padding:'10px 20px',
+                  gridColumn:`1 / -1`,
+                  fontSize:11, fontWeight:700, letterSpacing:'0.12em',
+                  color: accent, textTransform:'uppercase',
+                }}>
+                  {group.label}
+                </div>
+              </div>
+
+              {/* Feature rows */}
+              {group.features.map((feat, fi) => {
+                const isLast = fi === group.features.length - 1;
+                return (
+                  <div key={fi} style={{
+                    display:'grid',
+                    gridTemplateColumns:`220px repeat(${COLS}, 1fr)`,
+                    borderTop:'1px solid rgba(255,255,255,0.04)',
+                    transition:'background 0.15s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.03)'}
+                  onMouseLeave={e => e.currentTarget.style.background='transparent'}
+                  >
+                    {/* Feature name */}
+                    <div style={{
+                      padding:'14px 20px',
+                      borderRight:'1px solid rgba(255,255,255,0.06)',
+                      display:'flex', alignItems:'center',
+                    }}>
+                      <span style={{ fontSize:13, fontWeight:400, color:'rgba(255,255,255,0.7)', lineHeight:1.4, textWrap:'pretty' }}>
+                        {feat.name}
+                      </span>
+                    </div>
+
+                    {/* Values for each plan */}
+                    {PLANS.map((plan, pi) => (
+                      <div key={pi} style={{
+                        padding:'14px 20px',
+                        borderRight: pi < COLS-1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                        background: plan.highlight ? `${accent}08` : 'transparent',
+                      }}>
+                        <CellValue val={feat.values[pi]} highlight={plan.highlight} />
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
+            </React.Fragment>
+          ))}
+
+          {/* Bottom CTA row */}
+          <div style={{
+            display:'grid',
+            gridTemplateColumns:`220px repeat(${COLS}, 1fr)`,
+            borderTop:'1px solid rgba(255,255,255,0.08)',
+            background:'rgba(255,255,255,0.02)',
+          }}>
+            <div style={{ padding:'24px 20px', display:'flex', alignItems:'center' }}>
+              <span style={{ fontSize:12, color:'rgba(255,255,255,0.3)', fontStyle:'italic' }}>
+                All prices in USD
+              </span>
+            </div>
+            {PLANS.map((plan, pi) => (
+              <div key={pi} style={{
+                padding:'24px 16px',
+                borderRight: pi < COLS-1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                background: plan.highlight ? `${accent}08` : 'transparent',
+                display:'flex', flexDirection:'column', gap:8, alignItems:'center',
+              }}>
+                <button style={{
+                  width:'100%', padding:'12px 0',
+                  borderRadius:10, border:'none', cursor:'pointer',
+                  fontSize:14, fontWeight:700, letterSpacing:'0.03em',
+                  transition:'all 0.2s',
+                  ...(plan.ctaStyle === 'primary' ? {
+                    background: accent, color:'#fff',
+                    boxShadow: `0 4px 20px ${accent}55`,
+                  } : plan.ctaStyle === 'gold' ? {
+                    background:'linear-gradient(135deg, #FFD700, #FF8C00)',
+                    color:'#fff', boxShadow:'0 4px 20px rgba(255,180,0,0.4)',
+                  } : plan.ctaStyle === 'outline' ? {
+                    background:'transparent', color:'rgba(255,255,255,0.6)',
+                    border:'1px solid rgba(255,255,255,0.2)',
+                  } : {
+                    background:'rgba(255,255,255,0.08)', color:'#fff',
+                    border:'1px solid rgba(255,255,255,0.12)',
+                  }),
+                }}
+                onMouseEnter={e => {
+                  if(plan.ctaStyle==='primary'||plan.ctaStyle==='gold') e.target.style.transform='translateY(-2px) scale(1.02)';
+                }}
+                onMouseLeave={e => e.target.style.transform='none'}
+                >{plan.cta}</button>
+                {plan.price > 0 && (
+                  <span style={{ fontSize:11, color:'rgba(255,255,255,0.25)', textAlign:'center' }}>
+                    ${plan.perDay}/day
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Trust strip ── */}
+        <div style={{
+          marginTop:40, display:'flex', flexWrap:'wrap', gap:20,
+          justifyContent:'center', animation:'fadeUp 0.8s ease 0.3s both',
+        }}>
+          {[
+            { icon:'🔒', text:'Secure Checkout' },
+            { icon:'✅', text:'Instant Access' },
+            { icon:'💬', text:'Community Support' },
+            { icon:'📈', text:'Proven Strategy' },
+            { icon:'🏆', text:'1,000+ Members' },
+          ].map((item, i) => (
+            <div key={i} style={{
+              display:'flex', alignItems:'center', gap:8,
+              background:'rgba(255,255,255,0.04)',
+              border:'1px solid rgba(255,255,255,0.08)',
+              borderRadius:10, padding:'10px 16px',
+              fontSize:13, fontWeight:500, color:'rgba(255,255,255,0.6)',
+            }}>
+              <span style={{ fontSize:16 }}>{item.icon}</span>
+              {item.text}
+            </div>
+          ))}
+        </div>
+
+
+      </div>
+
+      {/* ── Tweaks Panel ── */}
+      {showTweaks && (
+        <div style={{
+          position:'fixed', bottom:24, right:24, zIndex:9999,
+          background:'#1a1a2e', border:'1px solid rgba(255,255,255,0.15)',
+          borderRadius:14, padding:20, width:240, boxShadow:'0 20px 60px #000a',
+        }}>
+          <div style={{ fontSize:13, fontWeight:700, color:'#fff', marginBottom:14 }}>Tweaks</div>
+          <label style={{ display:'block', fontSize:11, color:'rgba(255,255,255,0.5)', marginBottom:4 }}>Accent Color</label>
+          <input type="color" defaultValue={tweaks.accentColor}
+            onChange={e => {
+              tweaks.accentColor = e.target.value;
+              window.parent.postMessage({type:'__edit_mode_set_keys', edits:{accentColor:e.target.value}},'*');
+            }}
+            style={{ width:'100%', height:36, borderRadius:6, border:'none', cursor:'pointer', marginBottom:12 }}
+          />
+          <label style={{ display:'flex', alignItems:'center', gap:8, fontSize:12, color:'rgba(255,255,255,0.6)', cursor:'pointer' }}>
+            <input type="checkbox" defaultChecked={tweaks.darkBg}
+              onChange={e => {
+                tweaks.darkBg = e.target.checked;
+                window.parent.postMessage({type:'__edit_mode_set_keys', edits:{darkBg:e.target.checked}},'*');
+              }}
+            />
+            Dark Background
+          </label>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
