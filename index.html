@@ -24,14 +24,8 @@
   .animate-fade-up { animation: fadeUp 0.7s ease both; }
   .float1 { animation: float1 5s ease-in-out infinite; }
   .float2 { animation: float2 6s ease-in-out infinite 1s; }
-
-  /* Mobile menu overlay backdrop */
   .mobile-menu-open body { overflow: hidden; }
-
-  /* Fluid images */
   img { max-width: 100%; height: auto; }
-
-  /* Tap target minimum size */
   button, a { -webkit-tap-highlight-color: transparent; }
 </style>
 </head>
@@ -57,25 +51,29 @@ function Nav({ active, setActive }) {
   const width = useWindowWidth();
   const isMobile = width < 768;
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const items = ['Intro', 'Modules', 'Results', 'Pricing', 'Join'];
+  const items = ['Intro', 'How It Works', 'Results', 'Pricing', 'Join'];
 
   React.useEffect(() => {
     if (!isMobile) setMenuOpen(false);
   }, [isMobile]);
 
-  // Lock body scroll when mobile menu is open
   React.useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
+  const scrollTo = (item) => {
+    const id = item === 'Results' ? 'about-us'
+             : item === 'How It Works' ? 'how-it-works'
+             : item.toLowerCase().replace(/ /g, '-');
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const handleNavClick = (e, item) => {
     e.preventDefault();
     setActive(item);
     setMenuOpen(false);
-    document.getElementById(
-      item === 'Results' ? 'about-us' : item.toLowerCase().replace(' ', '-')
-    )?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollTo(item);
   };
 
   if (isMobile) {
@@ -100,28 +98,11 @@ function Nav({ active, setActive }) {
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               justifyContent: 'center', gap: 5, transition: 'background 0.2s'
             }}>
-            <span style={{
-              display: 'block', width: 18, height: 2,
-              background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2,
-              transition: 'transform 0.25s, background 0.2s',
-              transform: menuOpen ? 'rotate(45deg) translate(0px, 7px)' : 'none'
-            }} />
-            <span style={{
-              display: 'block', width: 18, height: 2,
-              background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2,
-              transition: 'opacity 0.2s, background 0.2s',
-              opacity: menuOpen ? 0 : 1
-            }} />
-            <span style={{
-              display: 'block', width: 18, height: 2,
-              background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2,
-              transition: 'transform 0.25s, background 0.2s',
-              transform: menuOpen ? 'rotate(-45deg) translate(0px, -7px)' : 'none'
-            }} />
+            <span style={{ display: 'block', width: 18, height: 2, background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2, transition: 'transform 0.25s, background 0.2s', transform: menuOpen ? 'rotate(45deg) translate(0px, 7px)' : 'none' }} />
+            <span style={{ display: 'block', width: 18, height: 2, background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2, transition: 'opacity 0.2s, background 0.2s', opacity: menuOpen ? 0 : 1 }} />
+            <span style={{ display: 'block', width: 18, height: 2, background: menuOpen ? '#fff' : '#0a0a0a', borderRadius: 2, transition: 'transform 0.25s, background 0.2s', transform: menuOpen ? 'rotate(-45deg) translate(0px, -7px)' : 'none' }} />
           </button>
         </nav>
-
-        {/* Dropdown menu */}
         <div style={{
           position: 'fixed', top: 73, left: 0, right: 0, bottom: 0, zIndex: 199,
           background: 'rgba(232,232,227,0.98)',
@@ -136,7 +117,7 @@ function Nav({ active, setActive }) {
         }}>
           {items.map((item) => (
             <a key={item}
-              href={`#${item.toLowerCase().replace(' ', '-')}`}
+              href={`#${item.toLowerCase().replace(/ /g, '-')}`}
               onClick={(e) => handleNavClick(e, item)}
               style={{
                 padding: '16px 20px', borderRadius: 14,
@@ -163,7 +144,6 @@ function Nav({ active, setActive }) {
     );
   }
 
-  // Desktop nav (unchanged)
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
@@ -181,8 +161,8 @@ function Nav({ active, setActive }) {
       }}>
         {items.map((item) =>
           <a key={item}
-            href={`#${item.toLowerCase().replace(' ', '-')}`}
-            onClick={(e) => { e.preventDefault(); setActive(item); document.getElementById(item === 'Results' ? 'about-us' : item.toLowerCase().replace(' ', '-'))?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
+            href={`#${item.toLowerCase().replace(/ /g, '-')}`}
+            onClick={(e) => { e.preventDefault(); setActive(item); scrollTo(item); }}
             style={{
               padding: '7px 18px', borderRadius: 100,
               fontSize: 14, fontWeight: 500,
@@ -279,187 +259,129 @@ function Accordion({ items }) {
   );
 }
 
-// ── PRICING TABLE ─────────────────────────────────────────────────────────────
+// ── PRICING DATA ──────────────────────────────────────────────────────────────
 const PLANS = [
-  { id: 1, name: '3 Month', subtitle: 'Starter', price: 149, regular: 298, period: '3 months', perDay: (149 / 91).toFixed(2), savings: 50, cta: 'Get Started', ctaStyle: 'outline', url: 'https://buy.stripe.com/5kQ5kDfHb8C964M8dS5kk09' },
-  { id: 2, name: '6 Month', subtitle: 'Popular', price: 299, regular: 598, period: '6 months', perDay: (299 / 182).toFixed(2), savings: 50, cta: 'Get Started', ctaStyle: 'ghost', url: 'https://buy.stripe.com/3cI00jfHb6u13WEcu85kk0a' },
-  { id: 3, name: '12 Month', subtitle: 'Best Value', price: 599, regular: 1198, period: '12 months', perDay: (599 / 365).toFixed(2), savings: 50, cta: 'Get Started', ctaStyle: 'primary', highlight: true, url: 'https://buy.stripe.com/14AaEXeD75pXbp6am05kk0b' }
-];
-
-const FEATURE_GROUPS = [
-  { label: 'Course Access', features: [
-    { name: 'Full Trading Course Access', values: ['YES', 'YES', 'YES'] }]
+  {
+    id: 1,
+    name: 'Free',
+    subtitle: 'Get Started',
+    price: 0,
+    period: 'forever',
+    cta: 'Join Free',
+    highlight: false,
+    badge: null,
+    url: 'https://www.skool.com/lazy-trading-4625/about',
+    features: [
+      'Introduction Course',
+      'Skool Community Access'
+    ]
   },
-  { label: 'Community & Support', features: [
-    { name: 'Skool Community Group Access', values: ['YES', 'YES', 'YES'] },
-    { name: 'Access To Premium Telegram', values: ['YES', 'YES', 'YES'] },
-    { name: 'Chat Support & Guidance', values: ['YES', 'YES', 'YES'] }]
+  {
+    id: 2,
+    name: 'Premium',
+    subtitle: '$79 / month',
+    price: 79,
+    period: 'per month',
+    cta: 'Join Premium',
+    highlight: false,
+    badge: 'Most Popular',
+    url: 'https://www.skool.com/lazy-trading-4625/about',
+    features: [
+      'Full MIR Trading Course',
+      'Premium Telegram Channel',
+      '1-on-1 Chat Support',
+      '40% Referral Commission',
+      'Refer 3 Members → VIP Upgrade Free'
+    ]
   },
-  { label: 'MIR Indicators', features: [
-    { name: 'MIR TKC Indicator Access', values: ['YES', 'YES', 'YES'] },
-    { name: 'MIR ALL Indicator Access', values: ['NO', 'YES', 'YES'] },
-    { name: 'MIR Indicator Beta Access', values: ['NO', 'NO', 'YES'] }]
-  },
-  { label: 'Premium Perks', features: [
-    { name: '1-on-1 Onboarding Guidance', values: ['NO', 'YES', 'YES'] },
-    { name: 'Access To VIP Telegram', values: ['NO', 'NO', 'YES'] },
-    { name: 'Invitation to VIP Events', values: ['NO', 'NO', 'YES'] },
-    { name: '30min 1-on-1 Coaching (worth $200-$500)', values: ['NO', 'x2', 'x5'] }]
+  {
+    id: 3,
+    name: 'VIP',
+    subtitle: '$948 / year',
+    price: 948,
+    period: 'per year',
+    cta: 'Join VIP',
+    highlight: true,
+    badge: 'Best Value',
+    url: 'https://www.skool.com/lazy-trading-4625/about',
+    features: [
+      'Everything in Premium',
+      'VIP Telegram Channel',
+      'Beta Indicator Access',
+      '1-on-1 Coaching Calls'
+    ]
   }
 ];
 
-function CellVal({ val, highlight }) {
-  if (val === 'YES') return <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '50%', background: highlight ? '#fff' : '#0a0a0a', color: highlight ? '#0a0a0a' : '#fff', fontSize: 13, fontWeight: 700 }}>✓</span>;
-  if (val === 'NO') return <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.06)', color: 'rgba(0,0,0,0.2)', fontSize: 13 }}>✕</span>;
-  return <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 36, height: 28, borderRadius: 14, padding: '0 10px', background: highlight ? '#fff' : '#0a0a0a', color: highlight ? '#0a0a0a' : '#fff', fontSize: 12, fontWeight: 700 }}>{val}</span>;
-}
-
+// ── PRICING TABLE ─────────────────────────────────────────────────────────────
 function PricingTable() {
   const width = useWindowWidth();
   const isMobile = width < 768;
-  const COLS = PLANS.length;
 
-  const AlertBanner = () => (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '16px 20px', background: '#f5f5f0', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-      <span style={{ fontSize: 20, flexShrink: 0 }}>🚨</span>
-      <div>
-        <span style={{ fontSize: 14, fontWeight: 700, color: '#0a0a0a' }}>Early Bird — Only 200 Slots Available. </span>
-        <span style={{ fontSize: 13, color: '#666' }}>Once slots fill, this pricing is gone. Early adopters <strong style={{ color: '#0a0a0a' }}>lock in their price for life</strong>.</span>
-      </div>
-    </div>
-  );
-
-  if (isMobile) {
-    return (
-      <div>
-        {/* Alert */}
-        <div style={{ borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', marginBottom: 20, boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}>
-          <AlertBanner />
-        </div>
-        {/* Plan cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {PLANS.map((plan, pi) => (
-            <div key={plan.id} style={{
-              borderRadius: 20, overflow: 'hidden',
-              border: plan.highlight ? '2px solid #0a0a0a' : '1px solid rgba(0,0,0,0.1)',
-              background: plan.highlight ? '#0a0a0a' : '#fff',
-              boxShadow: plan.highlight ? '0 8px 40px rgba(0,0,0,0.18)' : '0 2px 16px rgba(0,0,0,0.06)'
-            }}>
-              {plan.highlight && (
-                <div style={{ background: 'rgba(255,255,255,0.12)', textAlign: 'center', padding: '8px', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: '#fff', textTransform: 'uppercase' }}>★ Best Value</div>
-              )}
-              {/* Price header */}
-              <div style={{ padding: '28px 24px 24px', textAlign: 'center', borderBottom: `1px solid ${plan.highlight ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)'}` }}>
-                <div style={{ fontSize: 18, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 4 }}>{plan.name}</div>
-                <div style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.5)' : '#999', marginBottom: 16 }}>{plan.subtitle}</div>
-                <div style={{ fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#aaa', textDecoration: 'line-through', marginBottom: 2 }}>${plan.regular.toLocaleString()}</div>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 1, lineHeight: 1 }}>
-                  <span style={{ fontSize: 20, fontWeight: 700, color: plan.highlight ? 'rgba(255,255,255,0.7)' : '#666', paddingTop: 10 }}>$</span>
-                  <span style={{ fontSize: 60, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a' }}>{plan.price}</span>
-                </div>
-                <div style={{ fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.45)' : '#999', marginTop: 2, marginBottom: 12 }}>for {plan.period}</div>
-                <div style={{ display: 'inline-block', background: plan.highlight ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)', borderRadius: 20, padding: '4px 14px', fontSize: 12, fontWeight: 600, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 8 }}>Just ${plan.perDay}/day</div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: plan.highlight ? '#6effa8' : '#1a9a4a', letterSpacing: '0.05em', marginBottom: 20 }}>SAVE {plan.savings}% — EARLY BIRD</div>
-                <button style={{
-                  width: '100%', padding: '15px 0', borderRadius: 12, fontSize: 15, fontWeight: 700,
-                  cursor: 'pointer', border: 'none', background: 'rgb(147, 250, 0)', color: '#0a0a0a',
-                  minHeight: 52
-                }}
-                  onClick={() => window.open(plan.url, '_blank')}>
-                  {plan.cta}
-                </button>
-              </div>
-              {/* Features */}
-              <div style={{ padding: '20px 24px 28px' }}>
-                {FEATURE_GROUPS.map((group, gi) => (
-                  <div key={gi} style={{ marginBottom: gi < FEATURE_GROUPS.length - 1 ? 20 : 0 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#888', textTransform: 'uppercase', marginBottom: 12 }}>{group.label}</div>
-                    {group.features.map((feat, fi) => (
-                      <div key={fi} style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '10px 0', minHeight: 44,
-                        borderBottom: fi < group.features.length - 1 ? `1px solid ${plan.highlight ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)'}` : 'none'
-                      }}>
-                        <span style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.75)' : '#444', paddingRight: 12, lineHeight: 1.4 }}>{feat.name}</span>
-                        <CellVal val={feat.values[pi]} highlight={plan.highlight} />
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Desktop table layout (unchanged)
   return (
-    <div style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)', background: '#fff', boxShadow: '0 4px 40px rgba(0,0,0,0.06)' }}>
-      <AlertBanner />
-      {/* Plan headers */}
-      <div style={{ display: 'grid', gridTemplateColumns: `200px repeat(${COLS},1fr)` }}>
-        <div style={{ padding: '28px 20px', borderBottom: '1px solid rgba(0,0,0,0.07)', borderRight: '1px solid rgba(0,0,0,0.07)' }}>
-          <div style={{ fontSize: 11, color: '#999', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>Features</div>
-        </div>
-        {PLANS.map((plan, pi) =>
-          <div key={plan.id} style={{
-            padding: '28px 20px', textAlign: 'center',
-            background: plan.highlight ? '#0a0a0a' : '#fff',
-            borderBottom: `1px solid ${plan.highlight ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)'}`,
-            borderRight: pi < COLS - 1 ? '1px solid rgba(0,0,0,0.07)' : 'none',
-            position: 'relative'
-          }}>
-            {plan.highlight &&
-              <div style={{ position: 'absolute', top: -1, left: '50%', transform: 'translateX(-50%)', background: '#0a0a0a', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', padding: '4px 14px', borderRadius: '0 0 10px 10px', textTransform: 'uppercase' }}>Best Value</div>
-            }
-            <div style={{ fontSize: 16, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 4 }}>{plan.name}</div>
-            <div style={{ fontSize: 11, color: plan.highlight ? 'rgba(255,255,255,0.5)' : '#999', marginBottom: 16 }}>{plan.subtitle}</div>
-            <div style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.35)' : '#aaa', textDecoration: 'line-through', marginBottom: 2 }}>${plan.regular.toLocaleString()}</div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', gap: 1, lineHeight: 1 }}>
-              <span style={{ fontSize: 18, fontWeight: 700, color: plan.highlight ? 'rgba(255,255,255,0.7)' : '#666', paddingTop: 8 }}>$</span>
-              <span style={{ fontSize: 48, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a' }}>{plan.price}</span>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: isMobile ? 20 : 24, alignItems: 'start' }}>
+      {PLANS.map((plan) => (
+        <div key={plan.id} style={{
+          borderRadius: 24, overflow: 'hidden',
+          border: plan.highlight ? '2px solid #0a0a0a' : '1px solid rgba(0,0,0,0.1)',
+          background: plan.highlight ? '#0a0a0a' : '#fff',
+          boxShadow: plan.highlight ? '0 12px 48px rgba(0,0,0,0.18)' : '0 2px 16px rgba(0,0,0,0.05)',
+          position: 'relative'
+        }}>
+          {plan.badge && (
+            <div style={{
+              background: plan.highlight ? 'rgba(255,255,255,0.12)' : '#0a0a0a',
+              color: '#fff', textAlign: 'center',
+              padding: '8px 12px', fontSize: 10, fontWeight: 700,
+              letterSpacing: '0.12em', textTransform: 'uppercase'
+            }}>★ {plan.badge}</div>
+          )}
+          <div style={{ padding: isMobile ? '28px 24px' : '32px 28px' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: plan.highlight ? 'rgba(255,255,255,0.45)' : '#999', marginBottom: 8 }}>{plan.name}</div>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, marginBottom: 4 }}>
+              {plan.price === 0 ? (
+                <span style={{ fontSize: 52, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a', lineHeight: 1 }}>Free</span>
+              ) : (
+                <>
+                  <span style={{ fontSize: 20, fontWeight: 700, color: plan.highlight ? 'rgba(255,255,255,0.6)' : '#666', paddingBottom: 8 }}>$</span>
+                  <span style={{ fontSize: 52, fontWeight: 700, color: plan.highlight ? '#fff' : '#0a0a0a', lineHeight: 1 }}>{plan.price}</span>
+                </>
+              )}
             </div>
-            <div style={{ fontSize: 12, color: plan.highlight ? 'rgba(255,255,255,0.45)' : '#999', marginTop: 2, marginBottom: 12 }}>for {plan.period}</div>
-            <div style={{ display: 'inline-block', background: plan.highlight ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.05)', borderRadius: 20, padding: '4px 12px', fontSize: 11, fontWeight: 600, color: plan.highlight ? '#fff' : '#0a0a0a', marginBottom: 8 }}>Just ${plan.perDay}/day</div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: plan.highlight ? '#6effa8' : '#1a9a4a', letterSpacing: '0.05em', marginBottom: 16 }}>SAVE {plan.savings}% — EARLY BIRD</div>
+            <div style={{ fontSize: 13, color: plan.highlight ? 'rgba(255,255,255,0.4)' : '#aaa', marginBottom: plan.highlight ? 6 : 24 }}>{plan.period}</div>
+            {plan.highlight && (
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Same monthly rate — paid annually</div>
+            )}
             <button style={{
-              width: '100%', padding: '11px 0', borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: 'pointer', border: 'none', transition: 'all 0.15s',
-              ...(plan.ctaStyle === 'primary' ? { background: '#fff', color: '#0a0a0a' } :
-                plan.ctaStyle === 'ghost' ? { background: 'rgba(255,255,255,0.08)', color: '#0a0a0a', border: '1.5px solid rgba(0,0,0,0.15)' } :
-                  { background: 'transparent', color: '#666', border: '1.5px solid rgba(0,0,0,0.15)' }), transform: "none", background: "rgb(147, 250, 0)"
+              width: '100%', padding: '15px 0', borderRadius: 12,
+              fontSize: 14, fontWeight: 700, cursor: 'pointer',
+              border: plan.price === 0 ? '1.5px solid rgba(0,0,0,0.15)' : 'none',
+              background: plan.price === 0 ? 'transparent' : 'rgb(147,250,0)',
+              color: plan.price === 0 ? '#555' : '#0a0a0a',
+              marginBottom: 28, minHeight: 52, transition: 'opacity 0.15s'
             }}
-              onMouseEnter={(e) => { if (plan.ctaStyle === 'primary') e.target.style.transform = 'scale(1.02)'; }}
-              onMouseLeave={(e) => e.target.style.transform = 'none'}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
               onClick={() => window.open(plan.url, '_blank')}>
               {plan.cta}
             </button>
-          </div>
-        )}
-      </div>
-      {/* Feature groups */}
-      {FEATURE_GROUPS.map((group, gi) =>
-        <React.Fragment key={gi}>
-          <div style={{ display: 'grid', gridTemplateColumns: `200px repeat(${COLS},1fr)`, background: '#f5f5f0', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
-            <div style={{ padding: '9px 20px', gridColumn: '1/-1', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', color: '#888', textTransform: 'uppercase' }}>{group.label}</div>
-          </div>
-          {group.features.map((feat, fi) =>
-            <div key={fi} style={{ display: 'grid', gridTemplateColumns: `200px repeat(${COLS},1fr)`, borderTop: '1px solid rgba(0,0,0,0.05)', transition: 'background 0.12s' }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#fafaf8'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
-              <div style={{ padding: '13px 20px', borderRight: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: '#444', lineHeight: 1.4 }}>{feat.name}</span>
-              </div>
-              {PLANS.map((plan, pi) =>
-                <div key={pi} style={{ padding: '13px 20px', borderRight: pi < COLS - 1 ? '1px solid rgba(0,0,0,0.07)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', background: plan.highlight ? '#0a0a0a' : 'transparent' }}>
-                  <CellVal val={feat.values[pi]} highlight={plan.highlight} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {plan.features.map((feat, fi) => (
+                <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                  <span style={{
+                    flexShrink: 0, width: 20, height: 20, borderRadius: '50%',
+                    background: plan.highlight ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 11, fontWeight: 700,
+                    color: plan.highlight ? '#fff' : '#0a0a0a', marginTop: 1
+                  }}>✓</span>
+                  <span style={{ fontSize: 14, color: plan.highlight ? 'rgba(255,255,255,0.75)' : '#444', lineHeight: 1.5 }}>{feat}</span>
                 </div>
-              )}
+              ))}
             </div>
-          )}
-        </React.Fragment>
-      )}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -504,7 +426,6 @@ function TradingCalendar() {
 
   return (
     <div style={{ background: '#111', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
-      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '12px 14px' : '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', flexWrap: 'wrap', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 700, color: '#e8e8e3' }}>Trading Calendar</span>
@@ -519,13 +440,11 @@ function TradingCalendar() {
           <button style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#888', width: 32, height: 32, borderRadius: 6, cursor: 'pointer', fontSize: 14, minWidth: 32 }}>→</button>
         </div>
       </div>
-      {/* Day headers */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         {days.map((d) =>
           <div key={d} style={{ padding: isMobile ? '8px 0' : '12px 0', textAlign: 'center', fontSize: isMobile ? 10 : 11, fontWeight: 700, letterSpacing: isMobile ? '0' : '0.1em', color: '#555' }}>{d}</div>
         )}
       </div>
-      {/* Calendar rows */}
       {[0, 1, 2, 3, 4, 5].map((row) =>
         <div key={row} style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', borderBottom: row < 5 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
           {cells.slice(row * 7, row * 7 + 7).map((dayNum, ci) => {
@@ -575,70 +494,35 @@ function Slideshow() {
   React.useEffect(() => {
     const t = setInterval(() => {
       setFading(true);
-      setTimeout(() => {
-        setCurrent((c) => (c + 1) % images.length);
-        setFading(false);
-      }, 400);
+      setTimeout(() => { setCurrent((c) => (c + 1) % images.length); setFading(false); }, 400);
     }, 3500);
     return () => clearInterval(t);
   }, []);
 
   const go = (dir) => {
     setFading(true);
-    setTimeout(() => {
-      setCurrent((c) => (c + dir + images.length) % images.length);
-      setFading(false);
-    }, 300);
+    setTimeout(() => { setCurrent((c) => (c + dir + images.length) % images.length); setFading(false); }, 300);
   };
 
   return (
     <div style={{ position: 'relative', borderRadius: 16, overflow: 'hidden', background: '#111' }}>
-      <img
-        src={images[current]}
-        style={{
-          width: '100%', height: isMobile ? 260 : 480, objectFit: 'contain',
-          background: '#111',
-          opacity: fading ? 0 : 1,
-          transition: 'opacity 0.4s ease',
-          display: 'block'
-        }} />
-      <button onClick={() => go(-1)} style={{
-        position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-        background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)',
-        color: '#fff', width: 40, height: 40, borderRadius: '50%',
-        fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background 0.15s', minWidth: 40
-      }}
+      <img src={images[current]} style={{ width: '100%', height: isMobile ? 260 : 480, objectFit: 'contain', background: '#111', opacity: fading ? 0 : 1, transition: 'opacity 0.4s ease', display: 'block' }} />
+      <button onClick={() => go(-1)} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', width: 40, height: 40, borderRadius: '50%', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s', minWidth: 40 }}
         onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
-        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>
-        ←
-      </button>
-      <button onClick={() => go(1)} style={{
-        position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-        background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)',
-        color: '#fff', width: 40, height: 40, borderRadius: '50%',
-        fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background 0.15s', minWidth: 40
-      }}
+        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>←</button>
+      <button onClick={() => go(1)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', width: 40, height: 40, borderRadius: '50%', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.15s', minWidth: 40 }}
         onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'}
-        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>
-        →
-      </button>
+        onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>→</button>
       <div style={{ position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8 }}>
         {images.map((_, i) =>
-          <button key={i} onClick={() => { setFading(true); setTimeout(() => { setCurrent(i); setFading(false); }, 300); }} style={{
-            width: i === current ? 20 : 8, height: 8,
-            borderRadius: 4, border: 'none', cursor: 'pointer',
-            background: i === current ? '#fff' : 'rgba(255,255,255,0.3)',
-            transition: 'all 0.3s', padding: 0, minWidth: 8
-          }} />
+          <button key={i} onClick={() => { setFading(true); setTimeout(() => { setCurrent(i); setFading(false); }, 300); }} style={{ width: i === current ? 20 : 8, height: 8, borderRadius: 4, border: 'none', cursor: 'pointer', background: i === current ? '#fff' : 'rgba(255,255,255,0.3)', transition: 'all 0.3s', padding: 0, minWidth: 8 }} />
         )}
       </div>
     </div>
   );
 }
 
-// ── INTRO RIGHT PANEL (responsive) ───────────────────────────────────────────
+// ── INTRO RIGHT PANEL ─────────────────────────────────────────────────────────
 function IntroVisual() {
   const width = useWindowWidth();
   const isMobile = width < 768;
@@ -646,18 +530,12 @@ function IntroVisual() {
   if (isMobile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <FloatCard
-          text="Imagine making an extra $50-$100 a day consistently — That could eventually scale to outgrow your job's income"
-          style={{ maxWidth: '100%', width: '100%' }}
-        />
+        <FloatCard text="Imagine making an extra $50-$100 a day consistently — That could eventually scale to outgrow your job's income" style={{ maxWidth: '100%', width: '100%' }} />
         <div style={{ display: 'flex', gap: 12 }}>
           <img src="assets/img1.png" style={{ flex: 1, height: 140, objectFit: 'cover', borderRadius: 14, minWidth: 0 }} />
           <img src="assets/img2.png" style={{ flex: 1, height: 140, objectFit: 'cover', borderRadius: 14, minWidth: 0 }} />
         </div>
-        <FloatCard
-          text="Imagine working only 1-3 hours a day, and having extra time and freedom to do what you want to do, while earning more."
-          style={{ maxWidth: '100%', width: '100%' }}
-        />
+        <FloatCard text="Imagine working only 1-3 hours a day, and having extra time and freedom to do what you want to do, while earning more." style={{ maxWidth: '100%', width: '100%' }} />
       </div>
     );
   }
@@ -667,7 +545,7 @@ function IntroVisual() {
       <FloatCard text="Imagine making an extra $50-$100 a day consistently — That could eventually scale to outgrow your job's income" className="float1" style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }} />
       <img src="assets/img1.png" style={{ position: 'absolute', top: 0, right: 0, width: 240, height: 160, objectFit: 'cover', borderRadius: 16 }} />
       <img src="assets/img2.png" style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 200, height: 200, objectFit: 'cover', borderRadius: 16 }} />
-      <FloatCard text={"Imagine working only 1-3 hours a day, and having extra time and freedom to do what you want to do, while earning more."} className="float2" style={{ position: 'absolute', bottom: 20, right: 0, zIndex: 2 }} />
+      <FloatCard text="Imagine working only 1-3 hours a day, and having extra time and freedom to do what you want to do, while earning more." className="float2" style={{ position: 'absolute', bottom: 20, right: 0, zIndex: 2 }} />
     </div>
   );
 }
@@ -691,12 +569,14 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    const sections = ['intro', 'modules', 'about-us', 'pricing', 'join'];
+    const sections = ['intro', 'how-it-works', 'modules', 'about-us', 'pricing', 'join'];
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
           const id = e.target.id;
-          const label = id === 'about-us' ? 'Results' : id.charAt(0).toUpperCase() + id.slice(1);
+          const label = id === 'about-us' ? 'Results'
+                      : id === 'how-it-works' ? 'How It Works'
+                      : id.charAt(0).toUpperCase() + id.slice(1);
           setActiveNav(label);
         }
       });
@@ -739,7 +619,7 @@ function App() {
     <div style={{ background: '#e8e8e3', minHeight: '100vh' }}>
       <Nav active={activeNav} setActive={setActiveNav} />
 
-      {/* INTRO */}
+      {/* ── INTRO ── */}
       <section id="intro" style={{
         ...SS,
         display: 'grid',
@@ -751,21 +631,65 @@ function App() {
       }}>
         <div>
           <h1 style={{ fontSize: 'clamp(36px,5.5vw,72px)', fontWeight: 700, lineHeight: 1.05, letterSpacing: '-0.02em', color: '#0a0a0a', marginBottom: 20 }} className="animate-fade-up">
-            Financial Freedom<br />Is For All.
+            Create An Amazing<br />Secondary Income Stream.
           </h1>
           <p style={{ fontSize: isMobile ? 15 : 17, color: '#555', lineHeight: 1.65, maxWidth: 460, marginBottom: 32 }}>
-            Make an amazing living with futures trading using a simple strategy that makes you profitable in 14 days.
+            From trading feeling overwhelming and difficult — to owning a proven income-generating ability you can use for life.
           </p>
           <Accordion items={faqItems} />
         </div>
         <IntroVisual />
       </section>
 
-      {/* MODULES */}
+      {/* ── HOW IT WORKS ── */}
+      <section id="how-it-works" style={{ ...SS }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? 32 : 52 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#999', marginBottom: 14 }}>The Path</div>
+          <h2 style={{ fontSize: 'clamp(26px,4vw,52px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#0a0a0a', marginBottom: 16 }}>
+            Here's Exactly How<br />We Get You There
+          </h2>
+          <p style={{ fontSize: isMobile ? 14 : 16, color: '#666', maxWidth: 480, margin: '0 auto', lineHeight: 1.65 }}>
+            Three steps. No guesswork. No experience required.
+          </p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: isMobile ? 20 : 28 }}>
+          {[
+            {
+              step: '01',
+              title: 'A Structured Beginner Course',
+              body: 'A structured 4-hour beginner course so you never have to figure out where to start — built for complete beginners with zero trading experience.'
+            },
+            {
+              step: '02',
+              title: 'A Personal Action Plan',
+              body: 'A personal action plan so you always know what to do next, removing all guesswork after the course — from your first chart to your first funded account.'
+            },
+            {
+              step: '03',
+              title: 'Direct Support Until You Succeed',
+              body: 'Direct founder access and community backing so no obstacle, question, or setback ever stops your progress toward your first funded payout.'
+            }
+          ].map((item, i) => (
+            <div key={i} style={{
+              background: i === 1 ? '#0a0a0a' : '#fff',
+              border: i === 1 ? 'none' : '1px solid rgba(0,0,0,0.08)',
+              borderRadius: 20, padding: isMobile ? '28px 24px' : '36px 32px',
+              display: 'flex', flexDirection: 'column', gap: 16,
+              boxShadow: i === 1 ? '0 8px 40px rgba(0,0,0,0.15)' : '0 2px 16px rgba(0,0,0,0.04)'
+            }}>
+              <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.12em', color: i === 1 ? 'rgba(255,255,255,0.35)' : '#bbb' }}>STEP {item.step}</div>
+              <h3 style={{ fontSize: isMobile ? 20 : 22, fontWeight: 700, color: i === 1 ? '#fff' : '#0a0a0a', letterSpacing: '-0.01em', lineHeight: 1.2 }}>{item.title}</h3>
+              <p style={{ fontSize: isMobile ? 14 : 15, color: i === 1 ? 'rgba(255,255,255,0.6)' : '#666', lineHeight: 1.7 }}>{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── MODULES ── */}
       <section id="modules" style={{ ...SS }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#999', marginBottom: 14, textAlign: 'center' }}>Modules</div>
         <h2 style={{ fontSize: 'clamp(28px,5.5vw,76px)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.0, color: '#0a0a0a', marginBottom: isMobile ? 32 : 52, textAlign: 'center' }}>
-          Over 6 hours of video training
+          Over 4 Hours of Video Training
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr 1fr' : 'repeat(3,1fr)', gap: isMobile ? 40 : 32 }}>
           {moduleColumns.map((col, ci) =>
@@ -795,10 +719,8 @@ function App() {
         </div>
       </section>
 
-      {/* RESULTS / ABOUT */}
+      {/* ── RESULTS / ABOUT ── */}
       <section id="about-us" style={{ ...SS, display: 'flex', flexDirection: 'column', gap: isMobile ? 48 : 80 }}>
-
-        {/* Trading calendar */}
         <div>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#999', marginBottom: 14, textAlign: 'center' }}>Results</div>
           <h2 style={{ fontSize: 'clamp(22px,3.5vw,44px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#0a0a0a', marginBottom: 28, textAlign: 'center' }}>
@@ -806,8 +728,6 @@ function App() {
           </h2>
           <TradingCalendar />
         </div>
-
-        {/* About grid */}
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 32 : 80, alignItems: 'center' }}>
           <div>
             <h2 style={{ fontSize: 'clamp(26px,3.5vw,48px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 20, color: '#0a0a0a' }}>
@@ -832,7 +752,7 @@ function App() {
         </div>
       </section>
 
-      {/* PRICING */}
+      {/* ── PRICING ── */}
       <section id="pricing" style={{ ...SS }}>
         <div style={{ marginBottom: isMobile ? 32 : 48 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#999', marginBottom: 14 }}>Pricing</div>
@@ -840,21 +760,60 @@ function App() {
             Choose your path to<br />consistent income.
           </h2>
           <p style={{ fontSize: isMobile ? 14 : 15, color: '#666', maxWidth: 460, lineHeight: 1.6 }}>
-            All plans are 50% off regular price. Early adopters lock in their rate for life — prices increase as slots fill.
+            Start free and upgrade when you're ready. Or refer 3 members and make your subscription completely free.
           </p>
         </div>
         <PricingTable />
       </section>
 
-      {/* JOIN */}
+      {/* ── REFERRAL ── */}
+      <section id="referral" style={{ ...SS }}>
+        <p style={{ fontSize: isMobile ? 15 : 17, fontWeight: 700, color: '#0a0a0a', maxWidth: 560, lineHeight: 1.5, marginBottom: isMobile ? 24 : 32 }}>
+          Get good results, share your results & earn a crazy 40% from referrals
+        </p>
+        <div style={{
+          background: '#0a0a0a', borderRadius: 24,
+          padding: isMobile ? '40px 28px' : '60px 72px',
+          textAlign: 'center'
+        }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: 16 }}>Referral Program</div>
+          <h2 style={{ fontSize: 'clamp(24px,4vw,48px)', fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#fff', maxWidth: 640, margin: '0 auto 20px' }}>
+            Turn Your Subscription Into $0 —<br />Or Even A Profit
+          </h2>
+          <p style={{ fontSize: isMobile ? 14 : 16, color: 'rgba(255,255,255,0.55)', maxWidth: 540, margin: '0 auto 40px', lineHeight: 1.7 }}>
+            As a Premium member, every person you refer earns you 40% recurring commission. Refer just 3 active members and your subscription pays for itself. Keep referring and MIR Trading starts paying <em>you</em>.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: isMobile ? 16 : 20, marginBottom: 40 }}>
+            {[
+              { num: '40%', label: 'Recurring Commission', sub: 'On every active referral' },
+              { num: '3', label: 'Referrals = $0/month', sub: 'Your subscription fully covered' },
+              { num: '★', label: 'Refer 3 → VIP Free', sub: 'Instant upgrade on 3rd active ref' }
+            ].map((stat, i) => (
+              <div key={i} style={{
+                background: 'rgba(255,255,255,0.06)', borderRadius: 16,
+                padding: '24px 20px', border: '1px solid rgba(255,255,255,0.08)'
+              }}>
+                <div style={{ fontSize: isMobile ? 32 : 40, fontWeight: 700, color: 'rgb(147,250,0)', letterSpacing: '-0.02em', marginBottom: 6 }}>{stat.num}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 4 }}>{stat.label}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{stat.sub}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: isMobile ? 13 : 14, color: 'rgba(255,255,255,0.4)', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 28, maxWidth: 480, margin: '0 auto' }}>
+            Not into referring? No problem. Lock in VIP access at the same monthly rate by choosing the annual plan — $948/yr.
+          </div>
+        </div>
+      </section>
+
+      {/* ── JOIN ── */}
       <section id="join" style={{ ...SS, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
         <h2 style={{ fontSize: 'clamp(28px,5vw,68px)', fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.05, color: '#0a0a0a', maxWidth: 720, marginBottom: 20 }}>
           Your financial freedom starts today.
         </h2>
         <p style={{ fontSize: isMobile ? 14 : 16, color: '#666', maxWidth: 460, lineHeight: 1.65, marginBottom: 14, padding: '0 4px' }}>
-          Join traders who are building wealth and security for the future. Limited early bird slots remaining.
+          Join a growing community of traders building a real secondary income stream. Start free, grow at your own pace.
         </p>
-        <p style={{ fontSize: isMobile ? 17 : 20, fontWeight: 700, color: '#0a0a0a', marginBottom: 28, letterSpacing: '-0.01em' }}>NOT SURE YET?</p>
+        <p style={{ fontSize: isMobile ? 17 : 20, fontWeight: 700, color: '#0a0a0a', marginBottom: 28, letterSpacing: '-0.01em' }}>HAVE QUESTIONS?</p>
         <button style={{
           background: '#0a0a0a', color: '#fff', border: 'none', borderRadius: 100,
           padding: isMobile ? '16px 36px' : '16px 40px', fontSize: isMobile ? 15 : 16, fontWeight: 700,
@@ -864,7 +823,6 @@ function App() {
           onMouseLeave={(e) => { e.target.style.background = '#0a0a0a'; e.target.style.transform = 'none'; }}
           onClick={() => window.open('https://wa.me/message/UF6ZSWQHWSXCF1', '_blank')}>WhatsApp Us
         </button>
-
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginTop: 48 }}>
           {[['🔒', 'Secure Checkout'], ['✅', 'Instant Access'], ['💬', 'Community Support'], ['📈', 'Proven Strategy'], ['🏆', '$10,000+ Payouts']].map(([icon, text], i) =>
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 100, padding: '10px 16px', fontSize: isMobile ? 12 : 13, fontWeight: 500, color: '#444' }}>
@@ -874,7 +832,7 @@ function App() {
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* ── FOOTER ── */}
       <footer style={{
         borderTop: '1px solid rgba(0,0,0,0.08)',
         padding: isMobile ? '28px 20px' : '32px 80px',
@@ -887,13 +845,15 @@ function App() {
         <span style={{ fontSize: 12, color: '#aaa' }}>© 2026 MIR Trading - owned by Eighth Edge. All rights reserved.</span>
         <div style={{ display: 'flex', gap: 24 }}>
           {['Privacy', 'Terms', 'Contact'].map((l) =>
-            <a key={l} href={l === 'Privacy' ? 'privacy.html' : l === 'Terms' ? 'terms.html' : 'https://wa.me/message/UF6ZSWQHWSXCF1'}
-              target={l === 'Contact' ? '_blank' : '_self'} rel={l === 'Contact' ? 'noopener noreferrer' : undefined} style={{ fontSize: 12, color: '#999', textDecoration: 'none', padding: '4px 0', minHeight: 32, display: 'flex', alignItems: 'center' }}>{l}</a>
+            <a key={l}
+              href={l === 'Privacy' ? 'privacy.html' : l === 'Terms' ? 'terms.html' : 'https://wa.me/message/UF6ZSWQHWSXCF1'}
+              target={l === 'Contact' ? '_blank' : '_self'}
+              rel={l === 'Contact' ? 'noopener noreferrer' : undefined}
+              style={{ fontSize: 12, color: '#999', textDecoration: 'none', padding: '4px 0', minHeight: 32, display: 'flex', alignItems: 'center' }}>{l}</a>
           )}
         </div>
       </footer>
 
-      {/* TWEAKS */}
       {showTweaks &&
         <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 9999, background: '#fff', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 14, padding: 20, width: 220, boxShadow: '0 12px 48px rgba(0,0,0,0.15)' }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#0a0a0a', marginBottom: 14 }}>Tweaks</div>
