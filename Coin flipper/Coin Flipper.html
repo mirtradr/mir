@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Coin Flipper — MIR Probability Lab</title>
+<link rel="stylesheet" href="tokens.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100vh; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-fg-1);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Layout ─── */
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 40px 80px;
+  }
+
+  /* ─── Top bar ─── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 48px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    font-size: 22px;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: var(--color-bg-dark);
+    color: var(--color-accent);
+    display: grid; place-items: center;
+    font-size: 13px;
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.04em;
+  }
+  .topbar-meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .topbar-meta .t-overline { font-size: 11px; }
+  .session-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-bg-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+    font-size: var(--text-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-fg-3);
+  }
+  .topbar-reset {
+    background: transparent;
+    border: 1px solid var(--color-border-mid);
+    color: var(--color-fg-3);
+    border-radius: var(--radius-pill);
+    padding: 7px 16px;
+    font-size: var(--text-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.02em;
+    font-family: var(--font-sans);
+  }
+  .topbar-reset:hover:not(:disabled) {
+    background: var(--color-bg-dark);
+    color: var(--color-bg-white);
+    border-color: var(--color-bg-dark);
+  }
+  .topbar-reset:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .session-pill .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--color-profit-dim);
+    box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+  }
+
+  /* ─── Hero ─── */
+  .hero { margin-bottom: 56px; }
+  .hero .t-overline { margin-bottom: 18px; display: block; }
+  .hero h1 {
+    font-size: clamp(48px, 6vw, 84px);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-snug);
+    max-width: 920px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--color-fg-5);
+  }
+  .hero p {
+    margin-top: 20px;
+    max-width: 620px;
+    font-size: var(--text-lg);
+    color: var(--color-fg-3);
+    line-height: var(--lh-relaxed);
+  }
+
+  /* ─── Console card ─── */
+  .console {
+    background: var(--color-bg-dark);
+    border-radius: var(--radius-xl);
+    padding: 40px 44px 44px;
+    color: #f5f5f0;
+    box-shadow: var(--shadow-elevated);
+  }
+  .console-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    margin-bottom: 36px;
+  }
+  .console-head h2 {
+    font-size: 22px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-snug);
+  }
+  .console-head .overline-dark {
+    font-size: var(--text-xs);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-widest);
+    text-transform: uppercase;
+    color: var(--color-fg-5);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .console-head .meta {
+    display: flex; gap: 32px;
+    text-align: right;
+  }
+  .console-head .meta .label {
+    font-size: var(--text-xs);
+    color: var(--color-fg-5);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    font-weight: var(--fw-semibold);
+  }
+  .console-head .meta .val {
+    font-size: 24px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .console-head .meta .val.profit { color: var(--color-profit-glow); }
+  .console-head .meta .val.loss   { color: var(--color-loss); }
+
+  /* ─── Coin grid ─── */
+  .coin-row {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    column-gap: 14px;
+    row-gap: 36px;
+    margin-top: 28px;
+    margin-bottom: 40px;
+    perspective: 1200px;
+  }
+  .coin-slot {
+    aspect-ratio: 1 / 1;
+    position: relative;
+  }
+  .coin-index {
+    position: absolute;
+    top: -22px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-widest);
+    color: var(--color-fg-5);
+    font-variant-numeric: tabular-nums;
+  }
+  .coin {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(.5,.05,.2,1);
+  }
+  .coin.flipping { animation: flipAnim 0.9s ease-out forwards; }
+  @keyframes flipAnim {
+    0%   { transform: rotateY(0)    translateY(0);    }
+    40%  { transform: rotateY(720deg) translateY(-18px); }
+    100% { transform: rotateY(var(--end-rot, 0deg)) translateY(0); }
+  }
+  .coin .face {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-weight: var(--fw-bold);
+    font-size: 26px;
+    letter-spacing: 0;
+    backface-visibility: hidden;
+    border: 1.5px solid rgba(255,255,255,0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      inset 0 -8px 16px rgba(0,0,0,0.4);
+  }
+  .coin .heads {
+    background:
+      radial-gradient(circle at 30% 28%, #2a2a25 0%, #15140f 60%, #0a0a0a 100%);
+    color: var(--color-accent);
+    transform: rotateY(0deg);
+  }
+  .coin .tails {
+    background:
+      radial-gradient(circle at 30% 28%, #2a2a25 0%, #15140f 60%, #0a0a0a 100%);
+    color: #f5f5f0;
+    transform: rotateY(180deg);
+  }
+  .coin .face .ring {
+    position: absolute; inset: 7%;
+    border-radius: 50%;
+    border: 1px dashed rgba(255,255,255,0.07);
+    pointer-events: none;
+  }
+  .coin .face .glyph {
+    position: relative; z-index: 1;
+    font-family: var(--font-sans);
+  }
+  /* Idle (pre-flip) placeholder coin */
+  .coin.idle .heads,
+  .coin.idle .tails {
+    background:
+      radial-gradient(circle at 30% 28%, #1c1c18 0%, #0e0d0a 70%);
+    color: var(--color-fg-5);
+  }
+
+  /* ─── Probability slider ─── */
+  .slider-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  .slider-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 22px;
+  }
+  .slider-head .title {
+    font-size: var(--text-xs);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-widest);
+    text-transform: uppercase;
+    color: var(--color-fg-5);
+  }
+  .slider-head .balanced {
+    font-size: var(--text-xs);
+    color: var(--color-fg-5);
+    letter-spacing: var(--ls-wider);
+  }
+  .slider-head .balanced.fair { color: var(--color-accent); }
+
+  .slider-stack {
+    display: grid;
+    grid-template-columns: 140px 1fr 140px;
+    gap: 24px;
+    align-items: center;
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .side.right { align-items: flex-end; text-align: right; }
+  .side .glyph {
+    font-size: 32px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+  }
+  .side .glyph.h { color: var(--color-accent); }
+  .side .glyph.t { color: #f5f5f0; }
+  .side .pct {
+    font-size: 18px;
+    font-weight: var(--fw-semibold);
+    color: #f5f5f0;
+    font-variant-numeric: tabular-nums;
+  }
+  .side .name {
+    font-size: var(--text-xs);
+    color: var(--color-fg-5);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    font-weight: var(--fw-semibold);
+  }
+
+  .track-wrap { position: relative; }
+  .track {
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .track-fill {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background: linear-gradient(90deg, var(--color-accent) 0%, #c8ff66 100%);
+    border-radius: var(--radius-pill);
+    transition: width 0.15s ease;
+  }
+  .track-mid {
+    position: absolute;
+    left: 50%; top: -4px;
+    width: 1px; height: 16px;
+    background: rgba(255,255,255,0.25);
+  }
+  input[type=range] {
+    position: absolute;
+    inset: -10px 0;
+    width: 100%; height: 28px;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--color-bg-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    cursor: grab;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--color-bg-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    cursor: grab;
+  }
+  input[type=range]:active::-webkit-slider-thumb { cursor: grabbing; }
+  .track-presets {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 14px;
+    font-size: 10px;
+    color: var(--color-fg-5);
+    letter-spacing: var(--ls-wider);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+  }
+  .preset-btn {
+    background: none;
+    border: none;
+    color: var(--color-fg-5);
+    font: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+    font-family: var(--font-sans);
+  }
+  .preset-btn:hover { color: #f5f5f0; background: rgba(255,255,255,0.05); }
+  .preset-btn.active { color: var(--color-accent); }
+
+  /* ─── Action bar ─── */
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  .actions .hint {
+    font-size: var(--text-sm);
+    color: var(--color-fg-5);
+    letter-spacing: 0.01em;
+  }
+  .btn {
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: var(--fw-bold);
+    transition: all 0.15s;
+  }
+  .btn-flip {
+    background: var(--color-accent);
+    color: var(--color-bg-dark);
+    border-radius: var(--radius-pill);
+    padding: 18px 40px;
+    font-size: 16px;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-flip:hover { transform: scale(1.02); background: var(--color-accent-hover); }
+  .btn-flip:disabled {
+    background: rgba(255,255,255,0.1);
+    color: var(--color-fg-5);
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-reset {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--color-fg-5);
+    border-radius: var(--radius-pill);
+    padding: 16px 28px;
+    font-size: var(--text-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+  }
+  .btn-reset:hover:not(:disabled) { color: #f5f5f0; border-color: rgba(255,255,255,0.3); }
+  .btn-reset:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ─── Results section ─── */
+  .results {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 32px;
+  }
+  .panel {
+    background: var(--color-bg-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+  .panel-head {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-head h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+  }
+  .panel-head .count {
+    font-size: var(--text-sm);
+    color: var(--color-fg-5);
+    font-weight: var(--fw-medium);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Stats panel */
+  .stats-list { padding: 8px 0; }
+  .stat-row {
+    padding: 16px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .stat-row + .stat-row { border-top: 1px solid var(--color-border); }
+  .stat-row .label {
+    font-size: var(--text-xs);
+    color: var(--color-fg-5);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    font-weight: var(--fw-semibold);
+  }
+  .stat-row .val {
+    font-size: var(--text-xl);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-fg-1);
+  }
+  .stat-row .val.profit { color: var(--color-profit-dim); }
+  .stat-row .val.loss   { color: var(--color-loss); }
+  .stat-row .val.muted  { color: var(--color-fg-5); }
+  .stat-sub {
+    font-size: var(--text-sm);
+    color: var(--color-fg-5);
+    font-weight: var(--fw-medium);
+    font-variant-numeric: tabular-nums;
+    margin-left: 8px;
+  }
+
+  /* Distribution bars */
+  .dist {
+    padding: 22px 28px;
+    border-top: 1px solid var(--color-border);
+  }
+  .dist .row {
+    display: grid;
+    grid-template-columns: 28px 1fr 54px;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .dist .row:last-child { margin-bottom: 0; }
+  .dist .key {
+    font-size: var(--text-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-fg-1);
+  }
+  .dist .bar {
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .dist .bar-fill {
+    height: 100%;
+    border-radius: var(--radius-pill);
+    transition: width 0.4s ease;
+  }
+  .dist .bar-fill.h { background: var(--color-bg-dark); }
+  .dist .bar-fill.t { background: var(--color-fg-5); }
+  .dist .pct {
+    font-size: var(--text-sm);
+    color: var(--color-fg-3);
+    font-weight: var(--fw-semibold);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Log */
+  .log {
+    max-height: 480px;
+    overflow-y: auto;
+  }
+  .log-empty {
+    padding: 48px 28px;
+    text-align: center;
+    color: var(--color-fg-5);
+    font-size: var(--text-md);
+  }
+  .log-empty .arrow { font-size: 28px; display: block; margin-bottom: 8px; color: var(--color-fg-muted); }
+
+  .log table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .log thead th {
+    position: sticky; top: 0;
+    background: var(--color-bg-white);
+    text-align: left;
+    padding: 14px 28px;
+    font-size: 10px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-widest);
+    text-transform: uppercase;
+    color: var(--color-fg-5);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .log thead th:last-child { text-align: right; }
+  .log tbody td {
+    padding: 14px 28px;
+    font-size: var(--text-md);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    color: var(--color-fg-3);
+  }
+  .log tbody tr:last-child td { border-bottom: none; }
+  .log tbody tr:hover { background: #fafaf8; }
+  .log tbody td.num { color: var(--color-fg-5); font-weight: var(--fw-medium); width: 56px; }
+  .log tbody td.result { font-weight: var(--fw-bold); }
+  .log tbody td.result .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: var(--fw-bold);
+  }
+  .log tbody td.result .pill.h {
+    background: var(--color-bg-dark);
+    color: var(--color-accent);
+  }
+  .log tbody td.result .pill.t {
+    background: rgba(0,0,0,0.06);
+    color: var(--color-fg-1);
+  }
+  .log tbody td.running {
+    text-align: right;
+    color: var(--color-fg-4);
+    font-weight: var(--fw-medium);
+  }
+  .log tbody td.session {
+    color: var(--color-fg-5);
+    font-size: var(--text-sm);
+  }
+
+  .log::-webkit-scrollbar { width: 8px; }
+  .log::-webkit-scrollbar-track { background: transparent; }
+  .log::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+  /* Profitability calculator */
+  .calc-inputs {
+    padding: 22px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .calc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .calc-label {
+    font-size: var(--text-xs);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-widest);
+    text-transform: uppercase;
+    color: var(--color-fg-5);
+  }
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-mid);
+    border-radius: var(--radius-md);
+    padding: 0 14px;
+    transition: all 0.15s;
+  }
+  .input-wrap:focus-within {
+    border-color: var(--color-bg-dark);
+    background: var(--color-bg-white);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+  }
+  .input-wrap input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 14px 0;
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: var(--fw-bold);
+    color: var(--color-fg-1);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ls-snug);
+    -moz-appearance: textfield;
+  }
+  .input-wrap input::-webkit-outer-spin-button,
+  .input-wrap input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  .input-wrap .affix {
+    font-size: 18px;
+    font-weight: var(--fw-bold);
+    color: var(--color-fg-5);
+    letter-spacing: var(--ls-snug);
+  }
+  .input-wrap .prefix { margin-right: 4px; }
+  .calc-help {
+    font-size: var(--text-xs);
+    color: var(--color-fg-5);
+    letter-spacing: 0.01em;
+  }
+
+  .calc-stats { padding: 8px 0; }
+  .calc-row {
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .calc-row + .calc-row { border-top: 1px solid var(--color-border); }
+  .calc-row .key {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .key-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: var(--text-sm);
+    font-weight: var(--fw-bold);
+  }
+  .key-dot.heads { background: var(--color-bg-dark); color: var(--color-accent); }
+  .key-dot.tails { background: rgba(0,0,0,0.06); color: var(--color-fg-1); }
+  .key-name {
+    font-size: var(--text-md);
+    font-weight: var(--fw-semibold);
+    color: var(--color-fg-1);
+    letter-spacing: var(--ls-snug);
+  }
+  .key-sub {
+    font-size: var(--text-sm);
+    color: var(--color-fg-5);
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+  }
+  .calc-row .amt {
+    font-size: var(--text-xl);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ls-snug);
+  }
+  .calc-row .amt.profit { color: var(--color-profit-dim); }
+  .calc-row .amt.loss   { color: var(--color-loss); }
+
+  .calc-summary {
+    background: var(--color-bg-dark);
+    color: #f5f5f0;
+    padding: 24px 28px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    margin-top: 0;
+  }
+  .sum-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+  }
+  .sum-row + .sum-row { border-top: 1px solid rgba(255,255,255,0.08); margin-top: 4px; padding-top: 14px; }
+  .sum-label {
+    font-size: var(--text-xs);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-widest);
+    text-transform: uppercase;
+    color: var(--color-fg-5);
+  }
+  .sum-val.big {
+    font-size: 32px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    font-variant-numeric: tabular-nums;
+  }
+  .sum-val.profit  { color: var(--color-profit-glow); }
+  .sum-val.loss    { color: var(--color-loss); }
+  .sum-val.neutral { color: var(--color-fg-5); }
+  .sum-foot {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: var(--text-sm);
+    color: var(--color-fg-5);
+    letter-spacing: 0.01em;
+  }
+  .sum-foot .profit { color: var(--color-profit-glow); font-weight: var(--fw-semibold); }
+  .sum-foot .loss   { color: var(--color-loss); font-weight: var(--fw-semibold); }
+
+  /* Footer */
+  .foot {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+    color: var(--color-fg-5);
+  }
+
+  @media (max-width: 900px) {
+    .results { grid-template-columns: 1fr; }
+    .console { padding: 28px; }
+    .coin-row { gap: 8px; }
+    .slider-stack { grid-template-columns: 1fr; gap: 16px; }
+    .side.right { align-items: flex-start; text-align: left; }
+  }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel">
+
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    const FLIP_COUNT = 20;
+    const FLIP_STAGGER = 70;      // ms between coin reveals
+    const FLIP_DURATION = 850;    // ms per coin animation
+
+    /* ── Coin component ── */
+    function Coin({ index, state, result }) {
+      // state: 'idle' | 'flipping' | 'done'
+      // result: 'H' | 'T' | null
+      const endRot = result === 'T' ? '180deg' : '0deg';
+      const cls = ['coin'];
+      if (state === 'idle') cls.push('idle');
+      if (state === 'flipping') cls.push('flipping');
+      const style = state === 'flipping'
+        ? { '--end-rot': endRot, animationDuration: FLIP_DURATION + 'ms' }
+        : state === 'done'
+          ? { transform: `rotateY(${endRot})` }
+          : {};
+
+      return (
+        <div className="coin-slot">
+          <div className="coin-index">{String(index + 1).padStart(2, '0')}</div>
+          <div className={cls.join(' ')} style={style}>
+            <div className="face heads">
+              <span className="ring" />
+              <span className="glyph">H</span>
+            </div>
+            <div className="face tails">
+              <span className="ring" />
+              <span className="glyph">T</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ── App ── */
+    function App() {
+      const [prob, setProb] = useState(50);          // 0–100, probability of HEADS
+      const [coins, setCoins] = useState(
+        Array(FLIP_COUNT).fill(null).map(() => ({ state: 'idle', result: null }))
+      );
+      const [flipping, setFlipping] = useState(false);
+      const [log, setLog] = useState([]);            // {n, session, batchIndex, result, runningH, total, t}
+      const [session, setSession] = useState(1);
+      const [rMultiple, setRMultiple] = useState(1);
+      const [riskPerTrade, setRiskPerTrade] = useState(200);
+      const timers = useRef([]);
+
+      useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+      function flipAll() {
+        if (flipping) return;
+        setFlipping(true);
+        // pre-roll the results so animation lands on them
+        const results = Array.from({ length: FLIP_COUNT }, () =>
+          Math.random() * 100 < prob ? 'H' : 'T'
+        );
+
+        // reset coins to flipping state one by one
+        setCoins(prev => prev.map(() => ({ state: 'idle', result: null })));
+
+        results.forEach((res, i) => {
+          const startT = setTimeout(() => {
+            setCoins(prev => {
+              const next = [...prev];
+              next[i] = { state: 'flipping', result: res };
+              return next;
+            });
+          }, i * FLIP_STAGGER);
+          timers.current.push(startT);
+
+          const settleT = setTimeout(() => {
+            setCoins(prev => {
+              const next = [...prev];
+              next[i] = { state: 'done', result: res };
+              return next;
+            });
+            // append to log
+            setLog(prev => {
+              const baseTotal = prev.length;
+              const baseH = prev.filter(r => r.result === 'H').length;
+              const total = baseTotal + 1;
+              const heads = baseH + (res === 'H' ? 1 : 0);
+              return [
+                {
+                  n: total,
+                  session,
+                  batchIndex: i + 1,
+                  result: res,
+                  runningH: heads,
+                  total,
+                  t: new Date(),
+                },
+                ...prev,
+              ];
+            });
+          }, i * FLIP_STAGGER + FLIP_DURATION);
+          timers.current.push(settleT);
+        });
+
+        const doneT = setTimeout(() => {
+          setFlipping(false);
+          setSession(s => s + 1);
+        }, (FLIP_COUNT - 1) * FLIP_STAGGER + FLIP_DURATION + 50);
+        timers.current.push(doneT);
+      }
+
+      function reset() {
+        if (flipping) return;
+        timers.current.forEach(clearTimeout);
+        timers.current = [];
+        setCoins(Array(FLIP_COUNT).fill(null).map(() => ({ state: 'idle', result: null })));
+        setLog([]);
+        setSession(1);
+      }
+
+      /* ── Derived stats ── */
+      const stats = useMemo(() => {
+        const total = log.length;
+        const heads = log.filter(r => r.result === 'H').length;
+        const tails = total - heads;
+        const hPct = total ? (heads / total) * 100 : 0;
+        const tPct = total ? (tails / total) * 100 : 0;
+        // last batch
+        const lastBatch = log.filter(r => r.session === (session - 1));
+        const lastH = lastBatch.filter(r => r.result === 'H').length;
+        return { total, heads, tails, hPct, tPct, lastBatch: lastBatch.length, lastH };
+      }, [log, session]);
+
+      const isFair = prob === 50;
+      const skew = prob - 50; // -50…+50
+
+      function fmtTime(d) {
+        const hh = String(d.getHours()).padStart(2,'0');
+        const mm = String(d.getMinutes()).padStart(2,'0');
+        const ss = String(d.getSeconds()).padStart(2,'0');
+        return `${hh}:${mm}:${ss}`;
+      }
+
+      return (
+        <div className="page">
+          {/* Top bar */}
+          <div className="topbar">
+            <div className="logo">
+              <span className="logo-mark">M⋅</span>
+              <span>Probability Lab</span>
+            </div>
+            <div className="topbar-meta">
+              <div className="session-pill">
+                <span className="dot" />
+                Session #{String(session).padStart(3,'0')}
+              </div>
+              <button
+                className="btn topbar-reset"
+                onClick={reset}
+                disabled={flipping || log.length === 0}
+                title="Clear all flips and reset session"
+              >
+                ↺ Reset
+              </button>
+            </div>
+          </div>
+
+          {/* Hero */}
+          <div className="hero">
+            <span className="t-overline">
+</span>
+            <h1>
+              The Coin Flipper.<br/>
+              <em>Expectancy Calculator.</em>
+            </h1>
+            <p>
+              
+            </p>
+          </div>
+
+          {/* Console */}
+          <div className="console">
+            <div className="console-head">
+              <div>
+                <span className="overline-dark">Live Draw</span>
+                <h2>{FLIP_COUNT}-coin sequence · session #{String(session).padStart(3,'0')}</h2>
+              </div>
+              <div className="meta">
+                <div>
+                  <div className="label">Heads</div>
+                  <div className="val profit">{stats.total ? stats.hPct.toFixed(1) : '0.0'}%</div>
+                </div>
+                <div>
+                  <div className="label">Tails</div>
+                  <div className="val loss">{stats.total ? stats.tPct.toFixed(1) : '0.0'}%</div>
+                </div>
+                <div>
+                  <div className="label">Total flips</div>
+                  <div className="val">{String(stats.total).padStart(3,'0')}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Coins */}
+            <div className="coin-row">
+              {coins.map((c, i) => (
+                <Coin key={i} index={i} state={c.state} result={c.result} />
+              ))}
+            </div>
+
+            {/* Slider */}
+            <div className="slider-card">
+              <div className="slider-head">
+                <span className="title">Probability bias</span>
+                <span className={'balanced' + (isFair ? ' fair' : '')}>
+                  {isFair ? '◆ Fair coin · 50/50' : (skew > 0
+                    ? `Skewed +${skew} toward Heads`
+                    : `Skewed ${skew} toward Tails`)}
+                </span>
+              </div>
+              <div className="slider-stack">
+                <div className="side">
+                  <span className="glyph h">H</span>
+                  <span className="pct">{prob}%</span>
+                  <span className="name">Heads</span>
+                </div>
+                <div className="track-wrap">
+                  <div className="track">
+                    <div className="track-fill" style={{ width: prob + '%' }} />
+                    <div className="track-mid" />
+                  </div>
+                  <input
+                    type="range"
+                    min="0" max="100" step="1"
+                    value={prob}
+                    onChange={(e) => setProb(parseInt(e.target.value, 10))}
+                    disabled={flipping}
+                  />
+                  <div className="track-presets">
+                    {[
+                      { v: 0,   label: 'Always T' },
+                      { v: 25,  label: '25 / 75' },
+                      { v: 50,  label: 'Fair' },
+                      { v: 75,  label: '75 / 25' },
+                      { v: 100, label: 'Always H' },
+                    ].map(p => (
+                      <button
+                        key={p.v}
+                        className={'preset-btn' + (prob === p.v ? ' active' : '')}
+                        onClick={() => setProb(p.v)}
+                        disabled={flipping}
+                      >{p.label}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="side right">
+                  <span className="glyph t">T</span>
+                  <span className="pct">{100 - prob}%</span>
+                  <span className="name">Tails</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="actions">
+              <span className="hint">
+                {flipping ? 'Flipping in progress…' : `Press flip to draw ${FLIP_COUNT} coins. Heads = win, tails = loss.`}
+              </span>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button className="btn btn-reset" onClick={reset} disabled={flipping || log.length === 0}>
+                  Reset session
+                </button>
+                <button className="btn btn-flip" onClick={flipAll} disabled={flipping}>
+                  {flipping ? 'Flipping…' : `Flip ${FLIP_COUNT} coins`}
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Results */}
+          <div className="results">
+            {/* Stats panel */}
+            <div className="panel">
+              <div className="panel-head">
+                <h3>Tape stats</h3>
+                <span className="count">All sessions</span>
+              </div>
+              <div className="stats-list">
+                <div className="stat-row">
+                  <span className="label">Total flips</span>
+                  <span className="val">{String(stats.total).padStart(3,'0')}</span>
+                </div>
+                <div className="stat-row">
+                  <span className="label">Heads</span>
+                  <span>
+                    <span className="val profit">{stats.heads}</span>
+                    <span className="stat-sub">· {stats.hPct.toFixed(1)}%</span>
+                  </span>
+                </div>
+                <div className="stat-row">
+                  <span className="label">Tails</span>
+                  <span>
+                    <span className="val loss">{stats.tails}</span>
+                    <span className="stat-sub">· {stats.tPct.toFixed(1)}%</span>
+                  </span>
+                </div>
+                <div className="stat-row">
+                  <span className="label">Target vs actual</span>
+                  <span className="val muted">
+                    {prob}% / {stats.hPct.toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+              <div className="dist">
+                <div className="row">
+                  <span className="key">H</span>
+                  <div className="bar"><div className="bar-fill h" style={{ width: (stats.hPct || 0) + '%' }} /></div>
+                  <span className="pct">{stats.hPct.toFixed(0)}%</span>
+                </div>
+                <div className="row">
+                  <span className="key">T</span>
+                  <div className="bar"><div className="bar-fill t" style={{ width: (stats.tPct || 0) + '%' }} /></div>
+                  <span className="pct">{stats.tPct.toFixed(0)}%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Profitability calculator */}
+            <div className="panel calc">
+              <div className="panel-head">
+                <h3>Profitability calculator</h3>
+                <span className="count">Heads = win · Tails = loss</span>
+              </div>
+
+              <div className="calc-inputs">
+                <label className="calc-field">
+                  <span className="calc-label">R-Multiple</span>
+                  <div className="input-wrap">
+                    <input
+                      type="number" min="0" step="0.1"
+                      value={rMultiple}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setRMultiple(v === '' ? 0 : parseFloat(v));
+                      }}
+                    />
+                    <span className="affix">R</span>
+                  </div>
+                  <span className="calc-help">Reward : risk per win</span>
+                </label>
+                <label className="calc-field">
+                  <span className="calc-label">Risk per trade</span>
+                  <div className="input-wrap">
+                    <span className="affix prefix">$</span>
+                    <input
+                      type="number" min="0" step="10"
+                      value={riskPerTrade}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setRiskPerTrade(v === '' ? 0 : parseFloat(v));
+                      }}
+                    />
+                  </div>
+                  <span className="calc-help">Loss amount on a tail</span>
+                </label>
+              </div>
+
+              <div className="calc-stats">
+                <div className="calc-row">
+                  <div className="key">
+                    <span className="key-dot heads">H</span>
+                    <div>
+                      <div className="key-name">Wins</div>
+                      <div className="key-sub">{stats.heads} × +${(rMultiple * riskPerTrade).toLocaleString(undefined, {maximumFractionDigits: 2})}</div>
+                    </div>
+                  </div>
+                  <span className="amt profit">
+                    {stats.heads === 0 ? '$0' : `+$${(stats.heads * rMultiple * riskPerTrade).toLocaleString(undefined, {maximumFractionDigits: 2})}`}
+                  </span>
+                </div>
+                <div className="calc-row">
+                  <div className="key">
+                    <span className="key-dot tails">T</span>
+                    <div>
+                      <div className="key-name">Losses</div>
+                      <div className="key-sub">{stats.tails} × −${riskPerTrade.toLocaleString(undefined, {maximumFractionDigits: 2})}</div>
+                    </div>
+                  </div>
+                  <span className="amt loss">
+                    {stats.tails === 0 ? '$0' : `−$${(stats.tails * riskPerTrade).toLocaleString(undefined, {maximumFractionDigits: 2})}`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="calc-summary">
+                {(() => {
+                  const gross = stats.heads * rMultiple * riskPerTrade;
+                  const loss  = stats.tails * riskPerTrade;
+                  const pnl   = gross - loss;
+                  const exp   = stats.total ? pnl / stats.total : 0;
+                  const fmt = (n) => {
+                    const sign = n > 0 ? '+' : (n < 0 ? '−' : '');
+                    const abs = Math.abs(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    return `${sign}$${abs}`;
+                  };
+                  return (
+                    <>
+                      <div className="sum-row">
+                        <span className="sum-label">Net P&amp;L</span>
+                        <span className={'sum-val big ' + (pnl > 0 ? 'profit' : pnl < 0 ? 'loss' : 'neutral')}>
+                          {fmt(pnl)}
+                        </span>
+                      </div>
+                      <div className="sum-row">
+                        <span className="sum-label">Expectancy / trade</span>
+                        <span className={'sum-val big ' + (exp > 0 ? 'profit' : exp < 0 ? 'loss' : 'neutral')}>
+                          {stats.total ? fmt(exp) : '—'}
+                        </span>
+                      </div>
+                      <div className="sum-foot">
+                        Theoretical edge at {prob}% / {100-prob}% · {rMultiple}R:&nbsp;
+                        <strong className={(prob/100*rMultiple - (1-prob/100)) > 0 ? 'profit' : 'loss'}>
+                          {fmt((prob/100*rMultiple - (1-prob/100)) * riskPerTrade)} / trade
+                        </strong>
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          <div className="foot">
+            <span>MIR · Coin Flipper</span>
+            <span>Built by traders, for traders. <span style={{ color: 'var(--color-fg-muted)'}}>·</span>  Mir Trading. powered by EightEdge.</span>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  
+</script>
+</body>
+</html>
