@@ -1,0 +1,183 @@
+/* ─────────────────────────────────────────────
+   MIR Trading — Design Tokens
+   Font: Space Grotesk (Google Fonts)
+   ───────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+/* ── BASE COLORS ─────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --color-bg:           #e8e8e3;   /* warm sand — page background */
+  --color-bg-surface:   #f5f5f0;   /* slightly lighter surface */
+  --color-bg-white:     #ffffff;
+  --color-bg-dark:      #0a0a0a;   /* near-black — dark sections, cards */
+  --color-bg-dark-mid:  #111111;   /* dark calendar / dark component bg */
+
+  /* Foreground / Text */
+  --color-fg-1:         #0a0a0a;   /* primary text */
+  --color-fg-2:         #444444;
+  --color-fg-3:         #555555;
+  --color-fg-4:         #666666;
+  --color-fg-5:         #888888;
+  --color-fg-6:         #999999;
+  --color-fg-muted:     #aaaaaa;
+
+  /* Accent — Lime Green CTA */
+  --color-accent:       #93fa00;   /* primary CTA / highlight green */
+  --color-accent-hover: #7de000;
+
+  /* Semantic — Trading P&L */
+  --color-profit:       #4ade80;   /* bright green for gains */
+  --color-profit-bg:    rgba(22,101,52,0.4);
+  --color-profit-dim:   #22c55e;
+  --color-profit-glow:  #6effa8;
+  --color-loss:         #f87171;   /* red for losses */
+  --color-loss-bg:      rgba(127,29,29,0.4);
+
+  /* Borders */
+  --color-border:       rgba(0,0,0,0.08);
+  --color-border-mid:   rgba(0,0,0,0.10);
+  --color-border-dark:  rgba(255,255,255,0.06); /* on dark bg */
+
+  /* Overlays */
+  --color-overlay-light: rgba(255,255,255,0.60);
+  --color-overlay-blur:  rgba(232,232,227,0.88); /* nav blur */
+}
+
+/* ── TYPOGRAPHY SYSTEM ───────────────────────── */
+:root {
+  --font-sans: 'Space Grotesk', sans-serif;
+
+  /* Scale */
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 14px;
+  --text-md:   15px;
+  --text-lg:   17px;
+  --text-xl:   20px;
+  --text-2xl:  28px;
+  --text-3xl:  clamp(32px, 4vw, 52px);
+  --text-4xl:  clamp(36px, 5vw, 68px);
+  --text-hero: clamp(44px, 5.5vw, 72px);
+
+  /* Weights */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* Line heights */
+  --lh-tight:  1.05;
+  --lh-snug:   1.2;
+  --lh-normal: 1.55;
+  --lh-relaxed:1.65;
+  --lh-loose:  1.75;
+
+  /* Letter spacing */
+  --ls-tight:    -0.03em;
+  --ls-snug:     -0.02em;
+  --ls-normal:    0;
+  --ls-wide:      0.05em;
+  --ls-wider:     0.08em;
+  --ls-widest:    0.15em;  /* overlines, labels */
+}
+
+/* ── SEMANTIC TYPE STYLES ────────────────────── */
+.t-hero {
+  font-family: var(--font-sans);
+  font-size: var(--text-hero);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-snug);
+  color: var(--color-fg-1);
+}
+
+.t-h1 {
+  font-family: var(--font-sans);
+  font-size: var(--text-4xl);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-snug);
+  color: var(--color-fg-1);
+}
+
+.t-h2 {
+  font-family: var(--font-sans);
+  font-size: var(--text-3xl);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  color: var(--color-fg-1);
+}
+
+.t-h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: var(--fw-bold);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-fg-1);
+}
+
+.t-overline {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-widest);
+  text-transform: uppercase;
+  color: var(--color-fg-6);
+}
+
+.t-body-lg {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-relaxed);
+  color: var(--color-fg-3);
+}
+
+.t-body {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-loose);
+  color: var(--color-fg-3);
+}
+
+.t-body-sm {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--color-fg-4);
+}
+
+.t-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  color: var(--color-fg-5);
+}
+
+.t-mono {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.02em;
+}
+
+/* ── SPACING / RADII ─────────────────────────── */
+:root {
+  --radius-sm:  6px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --radius-pill: 100px;
+
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.07);
+  --shadow-table: 0 4px 40px rgba(0,0,0,0.06);
+  --shadow-nav: 0 1px 6px rgba(0,0,0,0.10);
+  --shadow-elevated: 0 12px 48px rgba(0,0,0,0.15);
+}
