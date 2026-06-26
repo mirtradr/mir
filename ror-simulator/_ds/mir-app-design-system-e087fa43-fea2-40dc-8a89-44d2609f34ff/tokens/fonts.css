@@ -1,0 +1,9 @@
+/* Mir webfonts
+   ----------------------------------------------------------------
+   SUBSTITUTION NOTE: No brand font files were provided. Mir uses
+   "Hanken Grotesk" (UI / display) and "Geist Mono" (numerals, tickers)
+   as the closest free matches to the warm, geometric-humanist grotesque
+   in the reference. Loaded from Google Fonts here so consumers render
+   correctly online. Swap in licensed binaries when available. */
+
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..800;1,400..600&family=Geist+Mono:wght@400..600&display=swap');

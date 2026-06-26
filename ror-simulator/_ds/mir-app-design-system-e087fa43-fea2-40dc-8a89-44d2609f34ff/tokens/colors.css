@@ -1,0 +1,93 @@
+/* Mir — Color tokens
+   ================================================================
+   A warm, premium trading palette. Sand & cream neutrals, a glossy
+   "sun" orange as the single brand accent, and tuned-warm gain/loss
+   semantics that read clearly without going neon. */
+
+:root {
+  /* ---- Brand: the "sun" orange -------------------------------- */
+  --orange-700: #B8430A;
+  --orange-600: #D9540A;
+  --orange-500: #F26A1B;   /* primary brand */
+  --orange-400: #FF8A3D;
+  --orange-300: #FFB173;
+  --orange-200: #FFD2A6;
+  --orange-100: #FCE7D2;
+  --orange-050: #FBF1E6;
+
+  /* The glossy sun gradient (hero orb, primary fills) */
+  --sun-core:  #FF7A1F;
+  --sun-edge:  #E0540A;
+  --sun-halo:  #FFD9A8;
+
+  /* ---- Warm neutral ramp (slightly sand-tinted grays) --------- */
+  --ink-900: #1A1611;   /* near-black, warm */
+  --ink-800: #2A241D;
+  --ink-700: #3D362E;
+  --ink-600: #574E43;
+  --ink-500: #6B6258;   /* secondary text */
+  --ink-400: #8C8378;   /* muted text */
+  --ink-300: #B5AB9D;   /* disabled / hairline-strong */
+  --ink-200: #D8CFC2;   /* borders */
+  --ink-100: #ECE5DA;   /* subtle borders / dividers */
+  --ink-050: #F4EEE5;
+
+  /* ---- Warm surfaces ------------------------------------------ */
+  --white:   #FFFFFF;
+  --paper:   #FBF8F3;   /* page background */
+  --cream:   #F6F0E7;   /* alt page / app shell */
+  --sand:    #F1EAE0;   /* sunken / inset surfaces */
+  --sand-deep:#E9DFD1;
+
+  /* ---- Trading semantics (tuned warm) ------------------------- */
+  --gain-600: #157A4B;
+  --gain-500: #1F9D63;  /* up / long / positive */
+  --gain-100: #DCF0E5;
+  --loss-600: #B5392C;
+  --loss-500: #D84A3C;  /* down / short / negative */
+  --loss-100: #F8E1DD;
+
+  /* ---- Support / status --------------------------------------- */
+  --info-500:  #3B7DD8;
+  --warn-500:  #E0A11B;
+
+  /* ================ SEMANTIC ALIASES ========================== */
+  /* Text */
+  --text-primary:   var(--ink-900);
+  --text-secondary: var(--ink-500);
+  --text-muted:     var(--ink-400);
+  --text-disabled:  var(--ink-300);
+  --text-on-brand:  var(--white);
+  --text-on-dark:   #F7F1E8;
+
+  /* Surfaces */
+  --surface-page:    var(--paper);
+  --surface-shell:   var(--cream);
+  --surface-card:    var(--white);
+  --surface-sunk:    var(--sand);
+  --surface-inverse: var(--ink-900);
+  --surface-glass:   rgba(255, 255, 255, 0.55);
+  --surface-glass-dark: rgba(26, 22, 17, 0.55);
+
+  /* Brand */
+  --brand:        var(--orange-500);
+  --brand-hover:  var(--orange-600);
+  --brand-press:  var(--orange-700);
+  --brand-soft:   var(--orange-050);
+  --on-brand:     var(--white);
+
+  /* Lines */
+  --border-subtle: var(--ink-100);
+  --border-default: var(--ink-200);
+  --border-strong: var(--ink-300);
+  --divider:       rgba(26, 22, 17, 0.08);
+
+  /* Market direction (use these in product UI) */
+  --up:        var(--gain-500);
+  --up-soft:   var(--gain-100);
+  --down:      var(--loss-500);
+  --down-soft: var(--loss-100);
+
+  /* Focus ring */
+  --focus-ring: rgba(242, 106, 27, 0.40);
+}

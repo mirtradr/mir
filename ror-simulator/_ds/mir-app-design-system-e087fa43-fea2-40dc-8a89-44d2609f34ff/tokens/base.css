@@ -1,0 +1,35 @@
+/* Mir — base resets & element defaults
+   Small, opinionated baseline so specimens & kits inherit the brand. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  color: var(--text-primary);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Numerals default to tabular in tables, prices, stats */
+.mir-num, .mir-mono {
+  font-family: var(--font-mono);
+  font-feature-settings: var(--num-tabular);
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3, h4 { margin: 0; letter-spacing: var(--ls-snug); }
+p { margin: 0; }
+
+::selection { background: var(--orange-200); color: var(--ink-900); }
+
+.mir-eyebrow {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}

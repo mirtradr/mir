@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{var j=[];var x=false;var S=30000;var f=3000;document.addEventListener("DOMContentLoaded",()=>{const H=window.Babel;const G="om-src-id";if(H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[G])){H.registerPlugin(G,({types:Y})=>({visitor:{JSXOpeningElement(U,Q){const J=U.node;if(J.name&&J.name.type==="JSXMemberExpression")return;for(let V=0;V<J.attributes.length;V++){const L=J.attributes[V];if(L.type==="JSXAttribute"&&L.name&&L.name.name==="data-om-id")return}const W=Q.file&&Q.file.opts&&Q.file.opts.filename||"?";const Z=J.loc&&J.loc.start;const z=`jsx:${W}:${J.start??0}:${Z?Z.line:0}:${Z?Z.column+1:0}`;J.attributes.push(Y.jsxAttribute(Y.jsxIdentifier("data-om-id"),Y.stringLiteral(z)))}}}))}const k="om-text-extract";let A=false;if(x&&H&&H.registerPlugin&&!(H.availablePlugins&&H.availablePlugins[k])){const Y=window.React;if(Y&&Y.useSyncExternalStore&&Y.createElement){A=true;const U={};const Q=new Set;let J=0;window.__omTextO=U;window.__omTextSet=(z)=>{for(const V in z){const L=z[V];if(L==null)delete U[V];else U[V]=L}J++;Q.forEach((V)=>V())};const W=(z)=>{Q.add(z);return()=>Q.delete(z)};const Z=()=>J;window.__OmT=function z(V){Y.useSyncExternalStore(W,Z,Z);return Y.createElement("span",{"data-om-text":V.i,className:"__om-t"},V.i in U?U[V.i]:V.children)};H.registerPlugin(k,({types:z})=>{const V={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const L={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const _=($,C)=>z.logicalExpression("??",z.memberExpression(z.logicalExpression("||",z.memberExpression(z.identifier("window"),z.identifier("__omTextO")),z.objectExpression([])),z.stringLiteral($),true),C);const E=($)=>$.file&&$.file.opts&&$.file.opts.filename||"?";const B=($)=>$.file&&$.file.code||"";const b=($,C)=>{const X=(F)=>F&&F.start!=null&&F.end!=null&&(F.type==="StringLiteral"||F.type==="TemplateLiteral"&&F.expressions.length===0)?[F.start,F.end]:null;const N=X(C);if(N)return N;if(C&&C.type==="Identifier"){const F=$.scope.getBinding(C.name);if(F&&F.constant&&F.path.node.type==="VariableDeclarator"){return X(F.path.node.init)}}return null};const M=($,C,X)=>{const N=$.node;let F=false;const w=(K,q)=>{F=true;return z.jsxElement(z.jsxOpeningElement(z.jsxIdentifier("__OmT"),[z.jsxAttribute(z.jsxIdentifier("i"),z.stringLiteral(K))],false),z.jsxClosingElement(z.jsxIdentifier("__OmT")),[q],false)};const D=N.children.map((K)=>{if(K.type==="JSXText"){if(K.start==null||K.end==null)return K;const q=X.slice(K.start,K.end);const R=q.length-q.trimStart().length;const m=q.length-q.trimEnd().length;if(R+m>=q.length)return K;return w(`txt:${C}:${K.start+R}:${K.end-m}`,K)}if(K.type==="JSXExpressionContainer"){const q=b($,K.expression);if(q)return w(`str:${C}:${q[0]}:${q[1]}`,K)}return K});if(F)N.children=D};return{visitor:{JSXOpeningElement($,C){const X=$.node;const N=E(C);const F={};for(let w=0;w<X.attributes.length;w++){const D=X.attributes[w];if(D.type!=="JSXAttribute"||!D.name)continue;const K=D.name.name;if(!L[K])continue;if(!D.value||D.value.type!=="StringLiteral")continue;if(D.value.start==null||D.value.end==null)continue;const q=`txt:${N}:${D.value.start}:${D.value.end}`;F[K]=q;D.value=z.jsxExpressionContainer(_(q,z.stringLiteral(D.value.value)))}if(Object.keys(F).length){X.attributes.push(z.jsxAttribute(z.jsxIdentifier("data-om-text-attrs"),z.stringLiteral(JSON.stringify(F))))}},JSXElement($,C){const X=$.node.openingElement;const N=X&&X.name&&X.name.name;if(N==="__OmT")return;if(typeof N==="string"&&V[N])return;M($,E(C),B(C))},JSXFragment($,C){M($,E(C),B(C))}}}})}}const u=A?["transform-react-jsx-source",G,k]:["transform-react-jsx-source",G];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((Y,U)=>{const Q=Y.getAttribute("data-plugins")||"";const J=u.filter((W)=>Q.indexOf(W)<0);if(J.length){Y.setAttribute("data-plugins",Q?`${Q},${J.join(",")}`:J.join(","))}if(!Y.hasAttribute("data-filename")){Y.setAttribute("data-filename",Y.getAttribute("src")||`inline-${U}`)}})});var y=window.parent;if(y&&y!==window){const H=(Q,J)=>{try{y.postMessage({__omelette_log:true,type:Q,data:J},"*")}catch{}};["log","warn","error"].forEach((Q)=>{const J=console[Q];console[Q]=(...W)=>{const Z=W.map((z)=>{try{return typeof z==="object"?JSON.stringify(z):String(z)}catch{try{return String(z)}catch{return"[unstringifiable]"}}}).join(" ");H(Q,Z);J.apply(console,W)}});window.addEventListener("error",(Q)=>{const J=Q.target;if(J&&J!==window&&J.tagName){const W=J.src||J.href||"";H("resource_error",`${J.tagName} failed to load: ${W}`)}else{H("error",`${Q.message||"Unknown error"} at ${Q.filename||"?"}:${Q.lineno||0}:${Q.colno||0}`)}},true);window.addEventListener("unhandledrejection",(Q)=>{const J=Q.reason;const W=J instanceof Error?`${J.message} ${J.stack}`:String(J);H("error",`Unhandled rejection: ${W}`)});const G=()=>{try{y.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(document.readyState==="complete")G();else window.addEventListener("load",G);if(window.ResizeObserver)new ResizeObserver(G).observe(document.documentElement);const k={};let A=0;window.claude={complete(Q){return new Promise((J,W)=>{if(!j.length){W(new Error("claude.complete: no parent origin"));return}const Z=`c${++A}`;const z=()=>setTimeout(()=>{delete k[Z];W(new Error(`claude.complete: no data for ${S/1000}s`))},S);const V=z();k[Z]={resolve:J,reject:W,text:"",t:V,arm:z};try{for(const L of j){y.postMessage({__om_api:true,id:Z,body:Q},L)}}catch(L){clearTimeout(V);delete k[Z];W(L)}})}};const u={};let Y=0;window.omelette={writeFile:(Q,J)=>new Promise((W,Z)=>{if(!j.length){W();return}const z=`f${++Y}`;const V=setTimeout(()=>{delete u[z];W()},f);u[z]={resolve:W,reject:Z,t:V};try{for(const L of j){y.postMessage({__om_file:true,id:z,op:"write",path:Q,content:J},L)}}catch{clearTimeout(V);delete u[z];W()}})};const U=(Q)=>{try{return JSON.stringify(Q)}catch{return JSON.stringify(String(Q))}};window.addEventListener("message",(Q)=>{if(j.indexOf(Q.origin)<0)return;if(Q.source!==y)return;const J=Q.data;if(!J)return;if(J.type==="omelette-preview-refresh"){if(typeof J.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token))return;const z=Math.max(1,Math.floor((J.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+J.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+z;return}if(J.__om_file_r){const z=u[J.id];if(!z)return;clearTimeout(z.t);delete u[J.id];if(J.ok)z.resolve();else z.reject(new Error(J.error||"write failed"));return}if(J.__om_api_r){const z=k[J.id];if(!z)return;if(J.error!=null){clearTimeout(z.t);delete k[J.id];z.reject(new Error(J.error));return}if(J.chunk!=null){clearTimeout(z.t);z.t=z.arm();z.text+=J.chunk;return}if(J.done){clearTimeout(z.t);delete k[J.id];z.resolve(J.text!=null?J.text:z.text);return}return}if(!J.__om_eval)return;const W=J;const Z=(z)=>{Q.source.postMessage({...z,__om_eval_r:1,id:W.id},Q.origin)};try{const z=(0,eval)(W.code);if(z&&typeof z.then==="function"){z.then((V)=>Z({ok:1,v:U(V)}),(V)=>Z({ok:0,e:String(V)}))}else{Z({ok:1,v:U(z)})}}catch(z){Z({ok:0,e:String(z)})}})}})();
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script>
+  (function () {
+    var re = /ResizeObserver loop/;
+    window.addEventListener('error', function (e) {
+      if (e && e.message && re.test(e.message)) { e.stopImmediatePropagation(); e.preventDefault(); }
+    }, true);
+    var oce = window.console && window.console.error;
+    if (oce) window.console.error = function () {
+      if (arguments[0] && re.test(String(arguments[0]))) return;
+      return oce.apply(this, arguments);
+    };
+    if (window.ResizeObserver && !window.__roPatched) {
+      window.__roPatched = true;
+      var RO = window.ResizeObserver;
+      window.ResizeObserver = function (cb) {
+        return new RO(function (entries, obs) {
+          window.requestAnimationFrame(function () { try { cb(entries, obs); } catch (err) {} });
+        });
+      };
+    }
+  })();
+</script>
+<link rel="stylesheet" href="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/tokens/colors.css">
+<link rel="stylesheet" href="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/tokens/typography.css">
+<link rel="stylesheet" href="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/tokens/effects.css">
+<link rel="stylesheet" href="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/tokens/base.css">
+<link rel="stylesheet" href="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/styles.css">
+<script src="_ds/mir-app-design-system-e087fa43-fea2-40dc-8a89-44d2609f34ff/_ds_bundle.js"></script>
+<style>
+  @keyframes scrIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .mir-scroll::-webkit-scrollbar { width: 0; height: 0; }
+  .mir-scroll { scrollbar-width: none; }
+  input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: var(--sand-deep); }
+  input[type=range]::-moz-range-track { height: 6px; border-radius: 999px; background: var(--sand-deep); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: var(--white); border: none; box-shadow: 0 2px 6px rgba(40,28,16,.22), inset 0 0 0 5px var(--orange-500); cursor: pointer; transition: transform .12s var(--ease-out); }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--white); border: none; box-shadow: 0 2px 6px rgba(40,28,16,.22), inset 0 0 0 5px var(--orange-500); cursor: pointer; }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.12); }
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 30px 16px; font-family: var(--font-sans); background: radial-gradient(125% 78% at 84% -8%, var(--orange-100) 0%, rgba(252,231,210,0) 50%), var(--grad-paper);">
+  <div style="position: relative; width: 393px; height: 852px; border-radius: 54px; background: #0b0906; padding: 11px; box-shadow: 0 50px 100px -24px rgba(40,28,16,.5), 0 26px 50px -28px rgba(40,28,16,.45);">
+    <div style="position: relative; width: 100%; height: 100%; border-radius: 44px; overflow: hidden; background: var(--surface-shell); display: flex; flex-direction: column;">
+
+      <div style="position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 120px; height: 35px; background: #0b0906; border-radius: 20px; z-index: 60;"></div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 28px 8px; flex-shrink: 0;">
+        <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--text-primary); letter-spacing: -.02em;">9:41</span>
+        <div style="display: flex; gap: 7px; align-items: center; color: var(--text-primary);">
+          <svg width="18" height="13" viewBox="0 0 18 13" fill="currentColor"><rect x="0" y="8" width="3" height="5" rx="1"/><rect x="5" y="5" width="3" height="8" rx="1"/><rect x="10" y="2.5" width="3" height="10.5" rx="1"/><rect x="15" y="0" width="3" height="13" rx="1" opacity="0.35"/></svg>
+          <svg width="17" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 20 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+          <svg width="25" height="13" viewBox="0 0 26 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="currentColor" opacity="0.4"/><rect x="2" y="2" width="16" height="9" rx="2" fill="currentColor"/><path d="M23.5 4.5v4a2 2 0 0 0 0-4Z" fill="currentColor" opacity="0.5"/></svg>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
+
+        <!-- ===================== MAIN MENU ===================== -->
+        <sc-if value="{{ isMenu }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="Menu" style="flex: 1; min-height: 0; display: flex; flex-direction: column; animation: scrIn .4s var(--ease-out);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 20px 12px; flex-shrink: 0;">
+              <div style="display: flex; align-items: center; gap: 11px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--ink-900); color: var(--text-on-dark); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; flex-shrink: 0;">S</div>
+                <div>
+                  <div style="font-size: 13px; color: var(--text-muted);">Good morning</div>
+                  <div style="font-size: 16px; font-weight: 600; color: var(--text-primary);">Sasha</div>
+                </div>
+              </div>
+              <button style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--surface-card); box-shadow: var(--shadow-xs); display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M21 18.6H3l1.9-2.5a4.4 4.4 0 0 0 .9-2.7V10a6.2 6.2 0 0 1 12.4 0v3.4a4.4 4.4 0 0 0 .9 2.7Z"/></svg>
+              </button>
+            </div>
+
+            <div class="mir-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 18px 22px;">
+              <div style="margin: 6px 2px 26px;">
+                <h1 style="font: var(--fw-semibold) 27px/1.08 var(--font-sans); letter-spacing: -.02em; color: var(--text-primary);">Your toolkit</h1>
+                <p style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-top: 8px; max-width: 264px;">A calm set of trading tools. Pick a category to begin.</p>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px 12px;">
+                <button onClick="{{ goTools }}" style="display: flex; flex-direction: column; align-items: center; gap: 11px; border: none; background: none; cursor: pointer; padding: 0; transition: transform .12s var(--ease-out);">
+                  <span style="width: 76px; height: 76px; border-radius: 22px; background: var(--grad-brand); box-shadow: var(--shadow-brand); display: flex; align-items: center; justify-content: center; color: var(--white);">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                  </span>
+                  <span style="font-size: 13px; font-weight: 600; color: var(--text-primary);">Tools</span>
+                </button>
+                <button onClick="{{ goOther }}" style="display: flex; flex-direction: column; align-items: center; gap: 11px; border: none; background: none; cursor: pointer; padding: 0; transition: transform .12s var(--ease-out);">
+                  <span style="width: 76px; height: 76px; border-radius: 22px; background: var(--sand-deep); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; color: var(--ink-500);">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></svg>
+                  </span>
+                  <span style="font-size: 13px; font-weight: 600; color: var(--text-primary);">Other</span>
+                </button>
+              </div>
+
+              <div style="text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 32px;">Mir · demo · illustrative, not a live brokerage</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; align-items: center; padding: 12px 16px 18px; background: var(--surface-glass); backdrop-filter: blur(var(--blur-glass)); -webkit-backdrop-filter: blur(var(--blur-glass)); border-top: 1px solid var(--divider); flex-shrink: 0;">
+              <button onClick="{{ goMenu }}" style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--brand); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg></button>
+              <button onClick="{{ goTools }}" style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg></button>
+              <button style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 5-6"/></svg></button>
+              <button style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===================== TOOLS ===================== -->
+        <sc-if value="{{ isTools }}">
+          <div data-screen-label="Tools" style="flex: 1; min-height: 0; display: flex; flex-direction: column; animation: scrIn .4s var(--ease-out);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 18px 12px; flex-shrink: 0;">
+              <button onClick="{{ goMenu }}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--surface-card); box-shadow: var(--shadow-xs); display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); white-space: nowrap;">Tools</div>
+              <div style="width: 40px; height: 40px;"></div>
+            </div>
+
+            <div class="mir-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 18px 22px;">
+              <div style="position: relative; overflow: hidden; border-radius: var(--r-card); background: var(--surface-inverse); color: var(--text-on-dark); padding: 24px 22px 26px; margin-bottom: 22px;">
+                <div style="position: absolute; right: -46px; top: -54px; width: 176px; height: 176px; border-radius: 50%; background: var(--grad-sun); box-shadow: var(--shadow-float); opacity: .95;"></div>
+                <div style="position: relative;">
+                  <div style="font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--orange-200);">Mir · tools</div>
+                  <h1 style="font: var(--fw-semibold) 28px/1.08 var(--font-sans); letter-spacing: -.02em; margin-top: 14px; max-width: 220px; color: var(--text-on-dark);">Test before you trade.</h1>
+                  <p style="font-size: 14px; line-height: 1.5; color: var(--ink-300); margin-top: 11px; max-width: 250px;">Pressure-test your edge against real risk limits — before a dollar is on the line.</p>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+                <h2 style="font: var(--fw-semibold) 19px/1 var(--font-sans); color: var(--text-primary); white-space: nowrap;">Available</h2>
+                <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); white-space: nowrap;">1 tool</span>
+              </div>
+
+              <button onClick="{{ openTool }}" style="text-align: left; width: 100%; border: 1px solid var(--border-subtle); background: var(--surface-card); border-radius: var(--r-xl); padding: 16px; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 15px; cursor: pointer; transition: transform .12s var(--ease-out);">
+                <span style="width: 54px; height: 54px; border-radius: var(--r-md); background: var(--brand-soft); color: var(--brand); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3.5l2-7 4.5 16 2.5-9H21"/></svg>
+                </span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px; font-weight: 600; color: var(--text-primary);">RoR Simulator</span>
+                    <x-import component-from-global-scope="MirDesignSystem_e087fa.Badge" tone="brand" size="sm" hint-size="auto,20px">Live</x-import>
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">Pressure-test a prop eval against your edge.</div>
+                </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+
+              <div style="text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 24px;">More tools on the way.</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; align-items: center; padding: 12px 16px 18px; background: var(--surface-glass); backdrop-filter: blur(var(--blur-glass)); -webkit-backdrop-filter: blur(var(--blur-glass)); border-top: 1px solid var(--divider); flex-shrink: 0;">
+              <button onClick="{{ goMenu }}" style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg></button>
+              <button onClick="{{ goTools }}" style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--brand); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg></button>
+              <button style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 5-6"/></svg></button>
+              <button style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===================== OTHER ===================== -->
+        <sc-if value="{{ isOther }}">
+          <div data-screen-label="Other" style="flex: 1; min-height: 0; display: flex; flex-direction: column; animation: scrIn .4s var(--ease-out);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 18px 12px; flex-shrink: 0;">
+              <button onClick="{{ goMenu }}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--surface-card); box-shadow: var(--shadow-xs); display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); white-space: nowrap;">Other</div>
+              <div style="width: 40px; height: 40px;"></div>
+            </div>
+
+            <div class="mir-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 18px 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+              <span style="width: 72px; height: 72px; border-radius: 22px; background: var(--surface-sunk); color: var(--ink-400); display: flex; align-items: center; justify-content: center; margin-bottom: 18px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+              </span>
+              <h2 style="font: var(--fw-semibold) 20px/1.2 var(--font-sans); color: var(--text-primary); white-space: nowrap;">Nothing here yet</h2>
+              <p style="font-size: 14px; line-height: 1.5; color: var(--text-muted); margin-top: 8px; max-width: 250px;">New apps and settings will show up here as Mir grows.</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-around; align-items: center; padding: 12px 16px 18px; background: var(--surface-glass); backdrop-filter: blur(var(--blur-glass)); -webkit-backdrop-filter: blur(var(--blur-glass)); border-top: 1px solid var(--divider); flex-shrink: 0;">
+              <button onClick="{{ goMenu }}" style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10"/></svg></button>
+              <button onClick="{{ goTools }}" style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/></svg></button>
+              <button style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 5-6"/></svg></button>
+              <button style="border: none; background: none; cursor: pointer; padding: 6px; color: var(--text-muted); display: flex;"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===================== TOOL / RoR ===================== -->
+        <sc-if value="{{ isTool }}">
+          <div data-screen-label="RoR Simulator" style="flex: 1; min-height: 0; display: flex; flex-direction: column; animation: scrIn .4s var(--ease-out);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 18px 12px; flex-shrink: 0;">
+              <button onClick="{{ goTools }}" style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-default); background: var(--surface-card); box-shadow: var(--shadow-xs); display: flex; align-items: center; justify-content: center; color: var(--text-primary); cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <div style="font-size: 16px; font-weight: 600; color: var(--text-primary); white-space: nowrap;">RoR Simulator</div>
+              <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: var(--text-muted); background: var(--surface-sunk); padding: 6px 10px; border-radius: var(--r-pill);">10k×</span>
+            </div>
+
+            <div class="mir-scroll" style="flex: 1; min-height: 0; overflow-y: auto; padding: 4px 18px 24px;">
+
+              <div style="position: relative; overflow: hidden; border-radius: var(--r-card); background: var(--surface-inverse); color: var(--text-on-dark); padding: 22px 22px 24px; margin-bottom: 14px;">
+                <div style="position: relative; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%;">
+                    <div style="position: relative; width: 104px; height: 104px; display: flex; align-items: center; justify-content: center;">
+                      <div style="position: absolute; width: 84px; height: 84px; border-radius: 50%; background: var(--grad-sun); opacity: .13; filter: blur(7px);"></div>
+                      {{ gaugePass }}
+                      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-family: var(--font-mono); font-size: 25px; font-weight: 500; line-height: 1; letter-spacing: -.02em; color: {{ gaugeColor }};">{{ passOdds }}<span style="font-size: 12px;">%</span></div>
+                        <div style="font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase; font-weight: 600; color: var(--ink-300); margin-top: 6px;">pass odds</div>
+                      </div>
+                    </div>
+                    <div style="position: relative; width: 104px; height: 104px; display: flex; align-items: center; justify-content: center;">
+                      {{ gaugeRuin }}
+                      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-family: var(--font-mono); font-size: 25px; font-weight: 500; line-height: 1; letter-spacing: -.02em; color: {{ ruinGaugeColor }};">{{ ruinNum }}<span style="font-size: 12px;">%</span></div>
+                        <div style="font-size: 8.5px; letter-spacing: .09em; text-transform: uppercase; font-weight: 600; color: var(--ink-300); margin-top: 6px;">risk of ruin</div>
+                      </div>
+                    </div>
+                  </div>
+                  <span style="display: inline-flex; align-items: center; white-space: nowrap; padding: 4px 12px; border-radius: var(--r-pill); font-size: 12px; font-weight: 600; margin-top: 8px; background: {{ badgeBg }}; color: {{ badgeFg }};">{{ verdictBadge }}</span>
+                  <h2 style="font: var(--fw-semibold) 22px/1.18 var(--font-sans); letter-spacing: -.01em; margin-top: 13px; color: var(--text-on-dark);">{{ verdictTitle }}</h2>
+                  <p style="font-size: 13.5px; line-height: 1.52; color: var(--ink-300); margin-top: 12px; max-width: 300px;">{{ verdictBody }}</p>
+                  <div style="font-family: var(--font-mono); font-size: 11px; color: var(--ink-400); margin-top: 14px;">10,000 simulated evals · ~{{ medTrades }} trades to a result</div>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 22px;">
+                <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--r-lg); padding: 15px 16px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted);">Unresolved</div>
+                  <div style="font-family: var(--font-mono); font-size: 25px; font-weight: 500; letter-spacing: -.02em; margin-top: 8px; white-space: nowrap; color: var(--text-primary);">{{ incStr }}</div>
+                </div>
+                <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--r-lg); padding: 15px 16px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted);">Edge / trade</div>
+                  <div style="font-family: var(--font-mono); font-size: 25px; font-weight: 500; letter-spacing: -.02em; margin-top: 8px; white-space: nowrap; color: {{ expColor }};">{{ expStr }}</div>
+                </div>
+                <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--r-lg); padding: 15px 16px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted);">Win-rate edge</div>
+                  <div style="font-family: var(--font-mono); font-size: 25px; font-weight: 500; letter-spacing: -.02em; margin-top: 8px; white-space: nowrap; color: {{ edgeColor }};">{{ edgeStr }}</div>
+                </div>
+                <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--r-lg); padding: 15px 16px; box-shadow: var(--shadow-sm);">
+                  <div style="font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted);">Break-even win</div>
+                  <div style="font-family: var(--font-mono); font-size: 25px; font-weight: 500; letter-spacing: -.02em; margin-top: 8px; white-space: nowrap; color: var(--text-primary);">{{ breakevenStr }}</div>
+                </div>
+              </div>
+
+              <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--r-card); padding: 20px; box-shadow: var(--shadow-card); margin-bottom: 14px;">
+                <div style="font: var(--fw-semibold) 17px/1 var(--font-sans); color: var(--text-primary); margin-bottom: 4px;">Your strategy</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Tune these to find the edge of what survives.</div>
+
+                <div style="display: flex; flex-direction: column; gap: 11px; margin-bottom: 20px;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 14px; color: var(--text-secondary); font-weight: 500; white-space: nowrap;">Win rate</span>
+                    <span style="font-family: var(--font-mono); font-size: 18px; font-weight: 500; color: var(--text-primary); white-space: nowrap;">{{ winStr }}</span>
+                  </div>
+                  <input type="range" min="30" max="85" step="0.5" value="{{ win }}" onInput="{{ onWin }}" style="width: 100%; height: 22px; cursor: pointer;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 11px; margin-bottom: 20px;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 14px; color: var(--text-secondary); font-weight: 500; white-space: nowrap;">Reward : risk</span>
+                    <span style="font-family: var(--font-mono); font-size: 18px; font-weight: 500; color: var(--text-primary); white-space: nowrap;">{{ rrStr }}</span>
+                  </div>
+                  <input type="range" min="0.5" max="5" step="0.1" value="{{ rr }}" onInput="{{ onRr }}" style="width: 100%; height: 22px; cursor: pointer;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 11px;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 14px; color: var(--text-secondary); font-weight: 500; white-space: nowrap;">Risk / trade</span>
+                    <span style="font-family: var(--font-mono); font-size: 18px; font-weight: 500; color: var(--text-primary); white-space: nowrap;">{{ riskStr }}</span>
+                  </div>
+                  <input type="range" min="25" max="1500" step="25" value="{{ risk }}" onInput="{{ onRisk }}" style="width: 100%; height: 22px; cursor: pointer;">
+                </div>
+              </div>
+
+              <div style="background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--r-card); padding: 20px; box-shadow: var(--shadow-card); margin-bottom: 16px;">
+                <div style="font: var(--fw-semibold) 17px/1 var(--font-sans); color: var(--text-primary); margin-bottom: 16px;">The account</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <label style="display: flex; flex-direction: column; gap: 7px;">
+                    <span style="font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted);">Account size</span>
+                    <div style="display: flex; align-items: center; gap: 5px; background: var(--surface-sunk); border-radius: var(--r-md); padding: 0 13px; height: 48px;">
+                      <span style="font-family: var(--font-mono); color: var(--text-muted); font-size: 15px;">$</span>
+                      <input type="number" value="{{ acct }}" onInput="{{ onAcct }}" style="flex: 1; min-width: 0; width: 100%; border: none; outline: none; background: transparent; font-family: var(--font-mono); font-size: 16px; font-weight: 500; color: var(--text-primary);">
+                    </div>
+                  </label>
+                  <label style="display: flex; flex-direction: column; gap: 7px;">
+                    <span style="font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted);">Profit target</span>
+                    <div style="display: flex; align-items: center; gap: 5px; background: var(--surface-sunk); border-radius: var(--r-md); padding: 0 13px; height: 48px;">
+                      <span style="font-family: var(--font-mono); color: var(--text-muted); font-size: 15px;">$</span>
+                      <input type="number" value="{{ target }}" onInput="{{ onTarget }}" style="flex: 1; min-width: 0; width: 100%; border: none; outline: none; background: transparent; font-family: var(--font-mono); font-size: 16px; font-weight: 500; color: var(--text-primary);">
+                    </div>
+                  </label>
+                  <label style="display: flex; flex-direction: column; gap: 7px;">
+                    <span style="font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted);">Max drawdown</span>
+                    <div style="display: flex; align-items: center; gap: 5px; background: var(--surface-sunk); border-radius: var(--r-md); padding: 0 13px; height: 48px;">
+                      <span style="font-family: var(--font-mono); color: var(--text-muted); font-size: 15px;">$</span>
+                      <input type="number" value="{{ dd }}" onInput="{{ onDd }}" style="flex: 1; min-width: 0; width: 100%; border: none; outline: none; background: transparent; font-family: var(--font-mono); font-size: 16px; font-weight: 500; color: var(--text-primary);">
+                    </div>
+                  </label>
+                  <label style="display: flex; flex-direction: column; gap: 7px;">
+                    <span style="font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted);">Trades to sim</span>
+                    <div style="display: flex; align-items: center; gap: 5px; background: var(--surface-sunk); border-radius: var(--r-md); padding: 0 13px; height: 48px;">
+                      <input type="number" value="{{ trades }}" onInput="{{ onTrades }}" style="flex: 1; min-width: 0; width: 100%; border: none; outline: none; background: transparent; font-family: var(--font-mono); font-size: 16px; font-weight: 500; color: var(--text-primary);">
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <x-import component-from-global-scope="MirDesignSystem_e087fa.Button" variant="primary" size="lg" full="{{ true }}" on-click="{{ onReroll }}" hint-size="100%,54px">Run 10,000 simulations</x-import>
+
+              <div style="text-align: center; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 16px; line-height: 1.5;">Static end-of-day drawdown model.<br>Illustrative — investing involves risk, including loss of principal.</div>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  defaults = { acct: 50000, target: 3000, dd: 2000, win: 55, rr: 2, risk: 200, trades: 60 };
+  state = { screen: 'menu', ...this.defaults, runId: 0, results: this.simulate({ acct: 50000, target: 3000, dd: 2000, win: 55, rr: 2, risk: 200, trades: 60 }) };
+
+  simulate(p) {
+    const TARGET = +p.target, FLOOR = -Math.abs(+p.dd);
+    const prob = (+p.win) / 100, rr = +p.rr, risk = +p.risk;
+    const winAmt = rr * risk;
+    const N = 10000, MAXT = Math.max(1, Math.round(+p.trades));
+    let pass = 0, ruin = 0, inc = 0;
+    const lens = [];
+    for (let i = 0; i < N; i++) {
+      let pnl = 0, done = false, t = 0;
+      for (t = 0; t < MAXT; t++) {
+        pnl += (Math.random() < prob) ? winAmt : -risk;
+        if (pnl <= FLOOR) { ruin++; done = true; break; }
+        if (pnl >= TARGET) { pass++; done = true; break; }
+      }
+      if (done) lens.push(t + 1); else inc++;
+    }
+    const passPct = pass / N * 100, ruinPct = ruin / N * 100, incPct = inc / N * 100;
+    const expectancy = prob * winAmt - (1 - prob) * risk;
+    const breakeven = 100 / (1 + rr);
+    lens.sort((a, b) => a - b);
+    const medTrades = lens.length ? lens[Math.floor(lens.length / 2)] : MAXT;
+    const be = breakeven.toFixed(1);
+    const ddN = Math.abs(+p.dd).toLocaleString('en-US');
+    let v;
+    if (expectancy < 0) {
+      v = { tone: 'down', badge: 'Not feasible', title: 'The math is against you',
+        body: 'Your win rate is under the ' + be + '% break-even for this reward:risk, so each trade loses money on average. No position size fixes a negative edge — lift win rate or reward:risk first.' };
+    } else if (ruinPct > 10) {
+      v = { tone: 'down', badge: 'Too much size', title: 'Good edge, too much size',
+        body: 'The edge is positive, but risk per trade is large against the $' + ddN + ' buffer — about ' + ruinPct.toFixed(0) + '% of runs hit the floor before target. Trim risk per trade and the ruin rate drops fast.' };
+    } else if (ruinPct > 5) {
+      v = { tone: 'warn', badge: 'On the edge', title: 'Survivable, but close',
+        body: 'Roughly ' + ruinPct.toFixed(1) + '% of runs end in ruin — survivable, but near the line. Aim for 5% or lower; a little less size per trade gets you there.' };
+    } else {
+      v = { tone: 'up', badge: 'Looks sound', title: 'This one holds up',
+        body: 'Positive edge with conservative sizing against the $' + ddN + ' buffer. Bad-luck clusters rarely reach the floor before you hit target.' };
+    }
+    return { passPct, ruinPct, incPct, expectancy, breakeven, medTrades, verdict: v };
+  }
+
+  setParam(key, val) {
+    this.setState((s) => { const ns = { ...s, [key]: val }; ns.results = this.simulate(ns); return ns; });
+  }
+  clampSet(key, raw, min, max) {
+    let v = parseFloat(raw);
+    if (!isFinite(v)) v = (min != null ? min : 0);
+    if (min != null) v = Math.max(min, v);
+    if (max != null) v = Math.min(max, v);
+    this.setParam(key, v);
+  }
+  money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+  signed(n) { return (n < 0 ? '\u2212$' : '+$') + Math.abs(Math.round(n)).toLocaleString('en-US'); }
+
+  renderVals() {
+    const st = this.state, r = st.results, v = r.verdict;
+    const color = v.tone === 'up' ? 'var(--gain-500)' : v.tone === 'warn' ? 'var(--warn-500)' : 'var(--loss-500)';
+    const badge = v.tone === 'up' ? ['var(--up-soft)', 'var(--gain-600)'] : v.tone === 'warn' ? ['#FBF1D9', '#9A6B0F'] : ['var(--down-soft)', 'var(--loss-600)'];
+    const GR = 42, GC = 2 * Math.PI * GR, gspan = 0.75;
+    const makeG = (frac, col) => {
+      const seg = (stroke, len) => React.createElement('circle', { cx: 52, cy: 52, r: GR, fill: 'none', stroke: stroke, strokeWidth: 9, strokeLinecap: 'round', strokeDasharray: len + ' ' + GC, transform: 'rotate(135 52 52)', style: { transition: 'stroke-dasharray .55s var(--ease-out)' } });
+      const ff = Math.max(0, Math.min(1, frac));
+      return React.createElement('svg', { width: 104, height: 104, viewBox: '0 0 104 104', style: { display: 'block' } },
+        seg('rgba(247,241,232,0.13)', GC * gspan), seg(col, GC * gspan * ff));
+    };
+    const ruinGaugeColor = r.ruinPct > 10 ? 'var(--loss-500)' : r.ruinPct > 5 ? 'var(--warn-500)' : 'var(--gain-500)';
+    const gaugePass = makeG(r.passPct / 100, color);
+    const gaugeRuin = makeG(r.ruinPct / 100, ruinGaugeColor);
+    const edge = st.win - r.breakeven;
+    return {
+      isMenu: st.screen === 'menu', isTools: st.screen === 'tools', isOther: st.screen === 'other', isTool: st.screen === 'tool',
+      goMenu: () => this.setState({ screen: 'menu' }),
+      goTools: () => this.setState({ screen: 'tools' }),
+      goOther: () => this.setState({ screen: 'other' }),
+      openTool: () => this.setState({ screen: 'tool' }),
+      onReroll: () => this.setState((s) => ({ runId: s.runId + 1, results: this.simulate(s) })),
+      win: st.win, rr: st.rr, risk: st.risk, acct: st.acct, target: st.target, dd: st.dd, trades: st.trades,
+      onWin: (e) => this.clampSet('win', e.target.value, 30, 85),
+      onRr: (e) => this.clampSet('rr', e.target.value, 0.5, 5),
+      onRisk: (e) => this.clampSet('risk', e.target.value, 25, 1500),
+      onAcct: (e) => this.clampSet('acct', e.target.value, 0, null),
+      onTarget: (e) => this.clampSet('target', e.target.value, 0, null),
+      onDd: (e) => this.clampSet('dd', e.target.value, 0, null),
+      onTrades: (e) => this.clampSet('trades', e.target.value, 5, 300),
+      winStr: (Math.round(st.win * 10) / 10).toString().replace(/\.0$/, '') + '%',
+      rrStr: (+st.rr).toFixed(1) + ' : 1',
+      riskStr: this.money(st.risk),
+      passOdds: r.passPct.toFixed(0),
+      gaugePass: gaugePass, gaugeRuin: gaugeRuin, gaugeColor: color, ruinGaugeColor: ruinGaugeColor, ruinNum: r.ruinPct.toFixed(1),
+      verdictTitle: v.title, verdictBody: v.body, verdictBadge: v.badge,
+      badgeBg: badge[0], badgeFg: badge[1],
+      incStr: r.incPct.toFixed(0) + '%',
+      expStr: this.signed(r.expectancy), expColor: r.expectancy >= 0 ? 'var(--gain-600)' : 'var(--loss-500)',
+      edgeStr: (edge >= 0 ? '+' : '\u2212') + Math.abs(edge).toFixed(1) + 'pt', edgeColor: edge >= 0 ? 'var(--gain-600)' : 'var(--loss-500)',
+      breakevenStr: r.breakeven.toFixed(1) + '%',
+      medTrades: r.medTrades,
+    };
+  }
+}
+</script>
+</body>
+</html>
